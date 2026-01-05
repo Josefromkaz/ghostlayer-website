@@ -272,10 +272,10 @@ export default function GhostLayerLanding() {
             <a href="#pricing" className="text-zinc-400 hover:text-white transition-colors">Цены</a>
           </div>
           
-          <button className="px-5 py-2.5 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2">
+          <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-5 py-2.5 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2">
             Скачать бесплатно
             <Download className="w-4 h-4" />
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -309,10 +309,10 @@ export default function GhostLayerLanding() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-4 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 flex items-center justify-center gap-2 text-lg">
+                <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-8 py-4 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 flex items-center justify-center gap-2 text-lg">
                   Скачать для Windows
                   <Download className="w-5 h-5" />
-                </button>
+                </a>
                 <button className="px-8 py-4 bg-zinc-800 text-white font-semibold rounded-xl hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2 text-lg border border-zinc-700">
                   Смотреть демо
                   <ChevronRight className="w-5 h-5" />
@@ -632,13 +632,13 @@ export default function GhostLayerLanding() {
             Полная версия бесплатно. Без кредитной карты. Без регистрации.
           </p>
           
-          <button className="px-10 py-5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 text-xl flex items-center justify-center gap-3 mx-auto">
+          <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-10 py-5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 text-xl flex items-center justify-center gap-3 mx-auto">
             Скачать GhostLayer для Windows
             <Download className="w-6 h-6" />
-          </button>
+          </a>
           
           <p className="text-zinc-600 mt-6 text-sm">
-            v1.0.0 • ~80 MB • Windows 10/11 (требуется 1 GB на диске)
+            v1.0.0 • ~220 MB • Windows 10/11 (требуется 1 GB на диске)
           </p>
           <p className="text-zinc-700 mt-2 text-xs font-mono">
             SHA-256: 1ac6cd78ce8029c31aa817c2a294ce2f03885efabe6f6022137939f393e084ef
