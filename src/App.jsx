@@ -300,7 +300,7 @@ export default function GhostLayerLanding() {
                 <br />
                 <span className="text-zinc-500">без утечки</span>
                 <br />
-                <span className="inline-block min-w-[280px] md:min-w-[420px] lg:min-w-[520px]">
+                <span className="inline-block h-[1.2em] min-w-[280px] md:min-w-[420px] lg:min-w-[520px] align-bottom whitespace-nowrap overflow-hidden">
                   <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
                 </span>
               </h1>
@@ -361,19 +361,22 @@ export default function GhostLayerLanding() {
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
               <div className="text-6xl font-bold text-red-400 mb-4">$4.44M</div>
               <div className="text-white font-semibold mb-2">Средняя стоимость утечки</div>
-              <div className="text-zinc-500">Профилактика дешевле в сотни раз</div>
+              <div className="text-zinc-500 text-sm mb-3">Профилактика дешевле в сотни раз</div>
+              <div className="text-zinc-600 text-xs">IBM, Cost of a Data Breach Report 2025</div>
             </div>
             
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
               <div className="text-6xl font-bold text-red-400 mb-4">77%</div>
-              <div className="text-white font-semibold mb-2">Сотрудников используют ИИ</div>
-              <div className="text-zinc-500">Запреты не работают</div>
+              <div className="text-white font-semibold mb-2">Сотрудников копируют данные в ИИ</div>
+              <div className="text-zinc-500 text-sm mb-3">Запреты не работают</div>
+              <div className="text-zinc-600 text-xs">LayerX Security, AI Data Security Report 2025</div>
             </div>
             
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
               <div className="text-6xl font-bold text-red-400 mb-4">86%</div>
               <div className="text-white font-semibold mb-2">Компаний «слепы» к AI-потокам</div>
-              <div className="text-zinc-500">GhostLayer возвращает контроль</div>
+              <div className="text-zinc-500 text-sm mb-3">GhostLayer возвращает контроль</div>
+              <div className="text-zinc-600 text-xs">Kiteworks, AI Security Gap Report 2025</div>
             </div>
           </div>
         </div>
