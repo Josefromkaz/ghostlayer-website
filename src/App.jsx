@@ -300,7 +300,7 @@ export default function GhostLayerLanding() {
                 <br />
                 <span className="text-zinc-500">без утечки</span>
                 <br />
-                <span className="block h-[1.6em] mb-2">
+                <span className="block h-[1.8em] mb-4">
                   <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
                 </span>
               </h1>
