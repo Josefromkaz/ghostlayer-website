@@ -300,7 +300,9 @@ export default function GhostLayerLanding() {
                 <br />
                 <span className="text-zinc-500">без утечки</span>
                 <br />
-                <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
+                <span className="inline-block min-w-[280px] md:min-w-[420px] lg:min-w-[520px]">
+                  <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
+                </span>
               </h1>
               
               <p className="text-xl text-zinc-400 mb-8 max-w-lg leading-relaxed">
@@ -350,28 +352,28 @@ export default function GhostLayerLanding() {
               <span className="text-red-400">Shadow AI</span> — тихая угроза
             </h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              83% юристов и 66% HR-специалистов уже используют ИИ на работе. 
-              Большинство — без разрешения и без защиты данных.
+              77% сотрудников уже используют ИИ на работе. 
+              Вы не можете запретить ИИ, но можете сделать его использование безопасным.
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
-              <div className="text-6xl font-bold text-red-400 mb-4">$4.88M</div>
+              <div className="text-6xl font-bold text-red-400 mb-4">$4.44M</div>
               <div className="text-white font-semibold mb-2">Средняя стоимость утечки</div>
-              <div className="text-zinc-500">IBM Cost of Data Breach Report 2025</div>
+              <div className="text-zinc-500">Профилактика дешевле в сотни раз</div>
             </div>
             
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
-              <div className="text-6xl font-bold text-red-400 mb-4">15%</div>
-              <div className="text-white font-semibold mb-2">Копируют PII в чат-боты</div>
-              <div className="text-zinc-500">LayerX Security Research</div>
+              <div className="text-6xl font-bold text-red-400 mb-4">77%</div>
+              <div className="text-white font-semibold mb-2">Сотрудников используют ИИ</div>
+              <div className="text-zinc-500">Запреты не работают</div>
             </div>
             
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
               <div className="text-6xl font-bold text-red-400 mb-4">86%</div>
               <div className="text-white font-semibold mb-2">Компаний «слепы» к AI-потокам</div>
-              <div className="text-zinc-500">Shadow AI Report 2024</div>
+              <div className="text-zinc-500">GhostLayer возвращает контроль</div>
             </div>
           </div>
         </div>
@@ -571,8 +573,9 @@ export default function GhostLayerLanding() {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <PricingCard
-              name="Starter"
-              price="$0"
+              name="Free Trial"
+              price="7 дней"
+              period="бесплатно"
               features={[
                 'Безлимитные документы',
                 'Все 28 паттернов PII',
@@ -581,7 +584,7 @@ export default function GhostLayerLanding() {
                 'Prompt Library',
                 'Side-by-Side просмотр',
               ]}
-              cta="Скачать бесплатно"
+              cta="Начать бесплатно"
             />
             
             <PricingCard
@@ -590,33 +593,33 @@ export default function GhostLayerLanding() {
               originalPrice="$199"
               popular
               features={[
-                'Всё из Starter',
+                'Всё из Free Trial',
                 'Learning System — ИИ учится на ваших правках',
                 'Пользовательские правила анонимизации',
-                'Приоритет ваших правил над автоматикой',
-                '1 год обновлений',
-                'Приоритетная поддержка',
+                '1 год обновлений и поддержки',
+                '30-дневная гарантия возврата',
               ]}
               cta="Купить лицензию"
             />
             
             <PricingCard
               name="Team"
-              price="$399"
+              price="Soon"
+              period="скоро"
               features={[
                 'Всё из Professional',
                 '5 рабочих мест',
                 'Общая база правил',
                 'Audit log',
-                'Интеграции (скоро)',
+                'Интеграции',
               ]}
-              cta="Связаться с нами"
+              cta="Оставить заявку"
             />
           </div>
           
           <div className="text-center mt-12">
             <p className="text-zinc-500">
-              60-дневная гарантия возврата • Работает на Windows 10/11
+              7 дней бесплатно • 30-дневная гарантия возврата • Windows 10/11
             </p>
           </div>
         </div>
@@ -629,7 +632,7 @@ export default function GhostLayerLanding() {
             Начните защищать данные <span className="text-emerald-400">сегодня</span>
           </h2>
           <p className="text-xl text-zinc-400 mb-8">
-            Полная версия бесплатно. Без кредитной карты. Без регистрации.
+            7 дней бесплатно. 30-дневная гарантия возврата. Без регистрации.
           </p>
           
           <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-10 py-5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 text-xl flex items-center justify-center gap-3 mx-auto">
