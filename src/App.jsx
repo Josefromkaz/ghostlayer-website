@@ -300,7 +300,7 @@ export default function GhostLayerLanding() {
                 <br />
                 <span className="text-zinc-500">без утечки</span>
                 <br />
-                <span className="block h-[1.2em] max-w-full overflow-hidden">
+                <span className="block h-[1.4em]">
                   <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
                 </span>
               </h1>
@@ -438,7 +438,7 @@ export default function GhostLayerLanding() {
             <FeatureCard
               icon={Zap}
               title="Мгновенная обработка"
-              description="Трёхступенчатый пайплайн: сначала ваши правила, затем regex-паттерны, затем NLP. Всё локально, без задержек сети."
+              description="Документы обрабатываются локально за секунды. Никаких задержек сети, никаких очередей — всё происходит на вашем устройстве."
             />
             <FeatureCard
               icon={Eye}
@@ -582,7 +582,7 @@ export default function GhostLayerLanding() {
               features={[
                 'Безлимитные документы',
                 'Все 28 паттернов PII',
-                'Русский, английский и казахский',
+                'Русский и английский',
                 'Entity Inspector',
                 'Prompt Library',
                 'Side-by-Side просмотр',
