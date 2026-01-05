@@ -198,7 +198,7 @@ const FeatureCard = ({ icon: Icon, title, description, highlight }) => (
 const PricingCard = ({ name, price, originalPrice, period, features, popular, cta }) => (
   <div className={`relative bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 rounded-2xl p-8 border ${
     popular ? 'border-emerald-500/50' : 'border-zinc-800'
-  } transition-all hover:transform hover:scale-[1.02]`}>
+  } transition-all hover:transform hover:scale-[1.02] flex flex-col h-full`}>
     {popular && (
       <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 rounded-full text-black text-sm font-semibold">
         🔥 Скидка 50%
@@ -214,7 +214,7 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
       {period && <span className="text-zinc-500">{period}</span>}
     </div>
     
-    <ul className="space-y-3 mb-8">
+    <ul className="space-y-3 mb-8 flex-grow">
       {features.map((feature, i) => (
         <li key={i} className="flex items-start gap-3">
           <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
@@ -223,7 +223,7 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
       ))}
     </ul>
     
-    <button className={`w-full py-3 rounded-xl font-semibold transition-all ${
+    <button className={`w-full py-3 rounded-xl font-semibold transition-all mt-auto ${
       popular 
         ? 'bg-emerald-500 text-black hover:bg-emerald-400' 
         : 'bg-zinc-800 text-white hover:bg-zinc-700'
@@ -300,7 +300,7 @@ export default function GhostLayerLanding() {
                 <br />
                 <span className="text-zinc-500">без утечки</span>
                 <br />
-                <span className="inline-block h-[1.2em] min-w-[280px] md:min-w-[420px] lg:min-w-[520px] align-bottom whitespace-nowrap overflow-hidden">
+                <span className="block h-[1.2em] max-w-full overflow-hidden">
                   <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
                 </span>
               </h1>
@@ -622,7 +622,7 @@ export default function GhostLayerLanding() {
           
           <div className="text-center mt-12">
             <p className="text-zinc-500">
-              7 дней бесплатно • 30-дневная гарантия возврата • Windows 10/11
+              7 дней бесплатно • 30-дневная гарантия возврата • Windows
             </p>
           </div>
         </div>
@@ -644,7 +644,7 @@ export default function GhostLayerLanding() {
           </a>
           
           <p className="text-zinc-600 mt-6 text-sm">
-            v1.0.0 • ~220 MB • Windows 10/11 (требуется 1 GB на диске)
+            v1.0.0 • ~220 MB • Windows
           </p>
           <p className="text-zinc-700 mt-2 text-xs font-mono">
             SHA-256: 1ac6cd78ce8029c31aa817c2a294ce2f03885efabe6f6022137939f393e084ef
