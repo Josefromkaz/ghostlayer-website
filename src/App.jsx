@@ -223,7 +223,7 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
       ))}
     </ul>
     
-    <button className={`w-full py-3 rounded-xl font-semibold transition-all mt-auto ${
+    <button onClick={onClick} className={`w-full py-3 rounded-xl font-semibold transition-all mt-auto ${
       popular 
         ? 'bg-emerald-500 text-black hover:bg-emerald-400' 
         : 'bg-zinc-800 text-white hover:bg-zinc-700'
