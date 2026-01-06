@@ -1,6 +1,308 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Zap, Brain, Eye, EyeOff, Copy, Download, CheckCircle, ChevronRight, Globe, Server, Cpu, FileText, Users, Briefcase, Scale, Heart, Columns, X } from 'lucide-react';
 
+// Translations
+const translations = {
+  ru: {
+    nav: {
+      features: 'Возможности',
+      security: 'Безопасность',
+      pricing: 'Цены',
+      download: 'Скачать бесплатно',
+    },
+    hero: {
+      badge: '100% Offline • Ваши данные остаются у вас',
+      title1: 'Используйте AI',
+      title2: 'без утечки',
+      typewriter: ['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны'],
+      description: 'GhostLayer автоматически скрывает конфиденциальные данные в документах перед отправкой в ИИ-сервисы. Полностью локально. Никаких серверов.',
+      downloadBtn: 'Скачать для Windows',
+      demoBtn: 'Смотреть демо',
+      stats: {
+        patterns: 'паттернов PII',
+        startup: 'запуск приложения',
+        connections: 'сетевых соединений',
+      },
+    },
+    demo: {
+      original: 'Оригинал',
+      anonymized: 'Анонимизировано',
+      originalText: `Договор аренды №2847
+  
+Арендодатель: ООО "Альфа-Инвест"
+ИНН: 7701234567
+Контактное лицо: Иванов Сергей Петрович
+Телефон: +7 (495) 123-45-67
+Email: ivanov@alpha-invest.ru
+
+Банковские реквизиты:
+Р/с 40817810099910004567
+БИК 044525225`,
+      anonymizedText: `Договор аренды №[DOC_ID]
+  
+Арендодатель: [COMPANY_1]
+ИНН: [INN_1]
+Контактное лицо: [PERSON_1]
+Телефон: [PHONE_1]
+Email: [EMAIL_1]
+
+Банковские реквизиты:
+Р/с [ACCOUNT_1]
+БИК [BIK_1]`,
+    },
+    problem: {
+      title: '— тихая угроза',
+      subtitle: '77% сотрудников уже используют ИИ на работе. Вы не можете запретить ИИ, но можете сделать его использование безопасным.',
+      stat1: { value: '$4.44M', label: 'Средняя стоимость утечки', desc: 'Профилактика дешевле в сотни раз' },
+      stat2: { value: '77%', label: 'Сотрудников копируют данные в ИИ', desc: 'Запреты не работают' },
+      stat3: { value: '86%', label: 'Компаний «слепы» к AI-потокам', desc: 'GhostLayer возвращает контроль' },
+    },
+    industries: {
+      title: 'Для профессионалов с',
+      titleHighlight: 'ответственностью',
+      lawyers: { title: 'Юристы', pain: 'Адвокатская тайна и риск дисциплинарки — один промпт может стоить лицензии' },
+      finance: { title: 'Финансисты', pain: 'SEC штрафует за off-channel коммуникации — AI-чаты попадают под запрет' },
+      hr: { title: 'HR-специалисты', pain: 'GDPR и право на забвение — резюме с PII нельзя отправлять в облако' },
+      medical: { title: 'Медики', pain: 'HIPAA требует BAA — бесплатные ИИ-сервисы не подходят для PHI' },
+    },
+    features: {
+      title: 'Три уровня защиты',
+      titleHighlight: 'в одном клике',
+      subtitle: 'GhostLayer комбинирует ваши правила, 28 regex-паттернов и NLP-модели для достижения высокой точности распознавания',
+      learning: { title: 'Learning System', desc: 'Один клик по слову — и оно скрывается навсегда. GhostLayer учится на ваших правках и становится умнее с каждым документом.' },
+      instant: { title: 'Мгновенная обработка', desc: 'Документы обрабатываются локально за секунды. Никаких задержек сети, никаких очередей — всё происходит на вашем устройстве.' },
+      inspector: { title: 'Entity Inspector', desc: 'Полный контроль: просматривайте все найденные сущности и решайте сами, что скрывать, а что оставить для контекста.' },
+      formats: { title: 'Поддержка форматов', desc: 'Работает с PDF, DOCX и TXT файлами. Загрузите документ и получите анонимизированную версию за секунды.' },
+      prompts: { title: 'Prompt Library', desc: 'Сохраняйте шаблоны промптов и копируйте анонимизированный текст вместе с инструкцией одной кнопкой.' },
+      sideBySide: { title: 'Side-by-Side сравнение', desc: 'Оригинал и анонимизированная версия рядом. Синхронная прокрутка и подсветка замен для полного контроля.' },
+    },
+    security: {
+      badge: 'Zero-Trust Architecture',
+      title: 'Безопасность —',
+      titleHighlight: 'не опция',
+      subtitle: 'GhostLayer спроектирован так, что утечка данных физически невозможна. Ваши документы никогда не покидают оперативную память.',
+      points: [
+        '100% Offline — нет сетевых соединений',
+        'Документы только в RAM — никогда на диске',
+        'AES-256-GCM шифрование правил',
+        'Machine-bound ключи — база бесполезна на другом ПК',
+      ],
+      cardTitle: 'Данные под защитой',
+      cardPoints: ['Документы обрабатываются локально', 'Не сохраняются на диск', 'Удаляются после закрытия'],
+    },
+    howItWorks: {
+      title: 'Три шага до',
+      titleHighlight: 'безопасного AI',
+      steps: [
+        { title: 'Загрузите документ', desc: 'Откройте PDF, DOCX или TXT файл в GhostLayer' },
+        { title: 'Проверьте результат', desc: 'Просмотрите Side-by-Side сравнение и скорректируйте при необходимости' },
+        { title: 'Скопируйте в ИИ', desc: 'Нажмите «Copy» и вставьте безопасный текст в любой ИИ-сервис' },
+      ],
+    },
+    pricing: {
+      title: 'Простые цены.',
+      titleHighlight: 'Без подписок.',
+      subtitle: 'Заплатите один раз — владейте навсегда. Никаких ежемесячных списаний.',
+      badge: '🎁 $99 с промокодом',
+      promo: 'Промокод:',
+      promoDiscount: '= скидка 50%',
+      footer: '7 дней бесплатно • 30-дневная гарантия возврата • Только для Windows',
+      free: {
+        name: 'Free Trial',
+        price: '7 дней',
+        period: 'бесплатно',
+        features: ['Безлимитные документы', 'Все 28 паттернов PII', 'Русский и английский', 'Entity Inspector', 'Prompt Library', 'Side-by-Side просмотр'],
+        cta: 'Начать бесплатно',
+      },
+      pro: {
+        name: 'Professional',
+        price: '$199',
+        features: ['Всё из Free Trial', 'Learning System — ИИ учится на ваших правках', 'Пользовательские правила анонимизации', '1 год обновлений и поддержки', '30-дневная гарантия возврата'],
+        cta: 'Купить лицензию',
+      },
+      team: {
+        name: 'Team',
+        price: 'Soon',
+        period: 'скоро',
+        features: ['Всё из Professional', '5 рабочих мест', 'Общая база правил', 'Audit log', 'Интеграции'],
+        cta: 'Оставить заявку',
+      },
+    },
+    cta: {
+      title: 'Начните защищать данные',
+      titleHighlight: 'сегодня',
+      subtitle: '7 дней бесплатно. 30-дневная гарантия возврата. Без регистрации.',
+      button: 'Скачать GhostLayer для Windows',
+      version: 'Только для Windows',
+    },
+    footer: {
+      docs: 'Документация',
+      contact: 'Контакты',
+      rights: '© 2025 GhostLayer. Все права защищены.',
+    },
+    modal: {
+      title: 'Заявка на Team',
+      subtitle: 'Мы свяжемся с вами, когда Team-версия будет готова',
+      name: 'Ваше имя',
+      email: 'Email',
+      message: 'Сообщение (опционально)',
+      submit: 'Отправить заявку',
+      sending: 'Отправка...',
+      success: 'Заявка отправлена!',
+      error: 'Ошибка. Попробуйте позже.',
+    },
+  },
+  en: {
+    nav: {
+      features: 'Features',
+      security: 'Security',
+      pricing: 'Pricing',
+      download: 'Download Free',
+    },
+    hero: {
+      badge: '100% Offline • Your data stays with you',
+      title1: 'Use AI',
+      title2: 'without leaking',
+      typewriter: ['client names', 'passport data', 'phone numbers', 'bank accounts', 'trade secrets'],
+      description: 'GhostLayer automatically redacts sensitive data in documents before sending to AI services. Completely local. No servers.',
+      downloadBtn: 'Download for Windows',
+      demoBtn: 'Watch Demo',
+      stats: {
+        patterns: 'PII patterns',
+        startup: 'app startup',
+        connections: 'network connections',
+      },
+    },
+    demo: {
+      original: 'Original',
+      anonymized: 'Anonymized',
+      originalText: `Lease Agreement #2847
+  
+Landlord: Alpha Invest LLC
+Tax ID: 12-3456789
+Contact: John Smith
+Phone: +1 (555) 123-4567
+Email: john@alpha-invest.com
+
+Banking Details:
+Account: 1234567890123456
+Routing: 021000021`,
+      anonymizedText: `Lease Agreement #[DOC_ID]
+  
+Landlord: [COMPANY_1]
+Tax ID: [TAX_ID_1]
+Contact: [PERSON_1]
+Phone: [PHONE_1]
+Email: [EMAIL_1]
+
+Banking Details:
+Account: [ACCOUNT_1]
+Routing: [ROUTING_1]`,
+    },
+    problem: {
+      title: '— the silent threat',
+      subtitle: '77% of employees already use AI at work. You can\'t ban AI, but you can make it safe to use.',
+      stat1: { value: '$4.44M', label: 'Average cost of data breach', desc: 'Prevention is hundreds of times cheaper' },
+      stat2: { value: '77%', label: 'Employees paste data into AI', desc: 'Bans don\'t work' },
+      stat3: { value: '86%', label: 'Companies are blind to AI data flows', desc: 'GhostLayer brings back control' },
+    },
+    industries: {
+      title: 'For professionals with',
+      titleHighlight: 'responsibility',
+      lawyers: { title: 'Lawyers', pain: 'Attorney-client privilege at risk — one prompt could cost your license' },
+      finance: { title: 'Finance', pain: 'SEC fines for off-channel communications — AI chats are prohibited' },
+      hr: { title: 'HR Professionals', pain: 'GDPR and right to be forgotten — resumes with PII can\'t go to cloud' },
+      medical: { title: 'Healthcare', pain: 'HIPAA requires BAA — free AI services don\'t qualify for PHI' },
+    },
+    features: {
+      title: 'Three layers of protection',
+      titleHighlight: 'in one click',
+      subtitle: 'GhostLayer combines your rules, 28 regex patterns, and NLP models to achieve high detection accuracy',
+      learning: { title: 'Learning System', desc: 'One click on a word — and it\'s hidden forever. GhostLayer learns from your edits and gets smarter with every document.' },
+      instant: { title: 'Instant Processing', desc: 'Documents are processed locally in seconds. No network delays, no queues — everything happens on your device.' },
+      inspector: { title: 'Entity Inspector', desc: 'Full control: review all detected entities and decide what to hide and what to keep for context.' },
+      formats: { title: 'Format Support', desc: 'Works with PDF, DOCX, and TXT files. Upload a document and get an anonymized version in seconds.' },
+      prompts: { title: 'Prompt Library', desc: 'Save prompt templates and copy anonymized text with instructions in one click.' },
+      sideBySide: { title: 'Side-by-Side View', desc: 'Original and anonymized versions side by side. Synchronized scrolling and replacement highlighting for full control.' },
+    },
+    security: {
+      badge: 'Zero-Trust Architecture',
+      title: 'Security is',
+      titleHighlight: 'not optional',
+      subtitle: 'GhostLayer is designed so data leaks are physically impossible. Your documents never leave RAM.',
+      points: [
+        '100% Offline — no network connections',
+        'Documents only in RAM — never on disk',
+        'AES-256-GCM encryption for rules',
+        'Machine-bound keys — database is useless on another PC',
+      ],
+      cardTitle: 'Data Protected',
+      cardPoints: ['Documents processed locally', 'Never saved to disk', 'Deleted after closing'],
+    },
+    howItWorks: {
+      title: 'Three steps to',
+      titleHighlight: 'safe AI',
+      steps: [
+        { title: 'Upload Document', desc: 'Open a PDF, DOCX, or TXT file in GhostLayer' },
+        { title: 'Review Results', desc: 'Check the side-by-side comparison and adjust if needed' },
+        { title: 'Copy to AI', desc: 'Click "Copy" and paste safe text into any AI service' },
+      ],
+    },
+    pricing: {
+      title: 'Simple pricing.',
+      titleHighlight: 'No subscriptions.',
+      subtitle: 'Pay once — own forever. No monthly charges.',
+      badge: '🎁 $99 with promo code',
+      promo: 'Promo code:',
+      promoDiscount: '= 50% off',
+      footer: '7-day free trial • 30-day money-back guarantee • Windows only',
+      free: {
+        name: 'Free Trial',
+        price: '7 days',
+        period: 'free',
+        features: ['Unlimited documents', 'All 28 PII patterns', 'Russian and English', 'Entity Inspector', 'Prompt Library', 'Side-by-Side view'],
+        cta: 'Start Free',
+      },
+      pro: {
+        name: 'Professional',
+        price: '$199',
+        features: ['Everything in Free Trial', 'Learning System — AI learns from your edits', 'Custom anonymization rules', '1 year of updates and support', '30-day money-back guarantee'],
+        cta: 'Buy License',
+      },
+      team: {
+        name: 'Team',
+        price: 'Soon',
+        period: 'coming soon',
+        features: ['Everything in Professional', '5 seats', 'Shared rules database', 'Audit log', 'Integrations'],
+        cta: 'Request Access',
+      },
+    },
+    cta: {
+      title: 'Start protecting data',
+      titleHighlight: 'today',
+      subtitle: '7-day free trial. 30-day money-back guarantee. No registration.',
+      button: 'Download GhostLayer for Windows',
+      version: 'Windows only',
+    },
+    footer: {
+      docs: 'Documentation',
+      contact: 'Contact',
+      rights: '© 2025 GhostLayer. All rights reserved.',
+    },
+    modal: {
+      title: 'Request Team Access',
+      subtitle: 'We\'ll contact you when Team version is ready',
+      name: 'Your name',
+      email: 'Email',
+      message: 'Message (optional)',
+      submit: 'Submit Request',
+      sending: 'Sending...',
+      success: 'Request sent!',
+      error: 'Error. Please try again later.',
+    },
+  },
+};
+
 // Animated counter component
 const AnimatedNumber = ({ value, suffix = '' }) => {
   const [count, setCount] = useState(0);
@@ -89,32 +391,8 @@ const ParticleField = () => {
 };
 
 // Demo anonymization component
-const AnonymizationDemo = () => {
+const AnonymizationDemo = ({ t }) => {
   const [showOriginal, setShowOriginal] = useState(true);
-  
-  const original = `Договор аренды №2847
-  
-Арендодатель: ООО "Альфа-Инвест"
-ИНН: 7701234567
-Контактное лицо: Иванов Сергей Петрович
-Телефон: +7 (495) 123-45-67
-Email: ivanov@alpha-invest.ru
-
-Банковские реквизиты:
-Р/с 40817810099910004567
-БИК 044525225`;
-
-  const anonymized = `Договор аренды №[DOC_ID]
-  
-Арендодатель: [COMPANY_1]
-ИНН: [INN_1]
-Контактное лицо: [PERSON_1]
-Телефон: [PHONE_1]
-Email: [EMAIL_1]
-
-Банковские реквизиты:
-Р/с [ACCOUNT_1]
-БИК [BIK_1]`;
 
   return (
     <div className="relative">
@@ -128,7 +406,7 @@ Email: [EMAIL_1]
           }`}
         >
           <Eye className="w-4 h-4 inline mr-2" />
-          Оригинал
+          {t.demo.original}
         </button>
         <button
           onClick={() => setShowOriginal(false)}
@@ -139,7 +417,7 @@ Email: [EMAIL_1]
           }`}
         >
           <EyeOff className="w-4 h-4 inline mr-2" />
-          Анонимизировано
+          {t.demo.anonymized}
         </button>
       </div>
       
@@ -153,7 +431,7 @@ Email: [EMAIL_1]
         <pre className={`whitespace-pre-wrap transition-all duration-500 ${
           showOriginal ? 'text-red-400/90' : 'text-emerald-400/90'
         }`}>
-          {showOriginal ? original : anonymized}
+          {showOriginal ? t.demo.originalText : t.demo.anonymizedText}
         </pre>
         
         {!showOriginal && (
@@ -195,13 +473,13 @@ const FeatureCard = ({ icon: Icon, title, description, highlight }) => (
 );
 
 // Pricing card component
-const PricingCard = ({ name, price, originalPrice, period, features, popular, cta, href, onClick }) => (
+const PricingCard = ({ name, price, originalPrice, period, features, popular, cta, badge, onClick }) => (
   <div className={`relative bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 rounded-2xl p-8 border ${
     popular ? 'border-emerald-500/50' : 'border-zinc-800'
   } transition-all hover:transform hover:scale-[1.02] flex flex-col h-full`}>
-    {popular && (
+    {popular && badge && (
       <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 rounded-full text-black text-sm font-semibold">
-        🎁 $99 с промокодом
+        {badge}
       </div>
     )}
     
@@ -234,7 +512,7 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
 );
 
 // Contact Modal component
-const ContactModal = ({ isOpen, onClose }) => {
+const ContactModal = ({ isOpen, onClose, t }) => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('');
   
@@ -244,7 +522,6 @@ const ContactModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setStatus('sending');
     
-    // Using Web3Forms (free)
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -254,7 +531,7 @@ const ContactModal = ({ isOpen, onClose }) => {
           name: formData.name,
           email: formData.email,
           message: formData.message,
-          subject: 'GhostLayer Team - Заявка'
+          subject: 'GhostLayer Team - Request'
         })
       });
       if (response.ok) {
@@ -275,19 +552,19 @@ const ContactModal = ({ isOpen, onClose }) => {
         <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-white">
           <X className="w-5 h-5" />
         </button>
-        <h3 className="text-2xl font-bold text-white mb-2">Заявка на Team</h3>
-        <p className="text-zinc-400 mb-6">Мы свяжемся с вами, когда Team-версия будет готова</p>
+        <h3 className="text-2xl font-bold text-white mb-2">{t.modal.title}</h3>
+        <p className="text-zinc-400 mb-6">{t.modal.subtitle}</p>
         
         {status === 'success' ? (
           <div className="text-center py-8">
             <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
-            <p className="text-white">Заявка отправлена!</p>
+            <p className="text-white">{t.modal.success}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
-              placeholder="Ваше имя"
+              placeholder={t.modal.name}
               required
               className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
               value={formData.name}
@@ -295,14 +572,14 @@ const ContactModal = ({ isOpen, onClose }) => {
             />
             <input
               type="email"
-              placeholder="Email"
+              placeholder={t.modal.email}
               required
               className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
               value={formData.email}
               onChange={e => setFormData({...formData, email: e.target.value})}
             />
             <textarea
-              placeholder="Сообщение (опционально)"
+              placeholder={t.modal.message}
               rows={3}
               className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none resize-none"
               value={formData.message}
@@ -313,9 +590,9 @@ const ContactModal = ({ isOpen, onClose }) => {
               disabled={status === 'sending'}
               className="w-full py-3 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors disabled:opacity-50"
             >
-              {status === 'sending' ? 'Отправка...' : 'Отправить заявку'}
+              {status === 'sending' ? t.modal.sending : t.modal.submit}
             </button>
-            {status === 'error' && <p className="text-red-400 text-sm text-center">Ошибка. Попробуйте позже.</p>}
+            {status === 'error' && <p className="text-red-400 text-sm text-center">{t.modal.error}</p>}
           </form>
         )}
       </div>
@@ -332,16 +609,33 @@ const IndustryCard = ({ icon: Icon, title, pain }) => (
   </div>
 );
 
+// Language Switcher
+const LanguageSwitcher = ({ lang, setLang }) => (
+  <button
+    onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')}
+    className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors text-sm"
+  >
+    <Globe className="w-4 h-4 text-zinc-400" />
+    <span className="text-zinc-300 font-medium">{lang === 'ru' ? 'EN' : 'RU'}</span>
+  </button>
+);
+
 // Main landing page component
 export default function GhostLayerLanding() {
   const [scrolled, setScrolled] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [lang, setLang] = useState('ru');
+  
+  const t = translations[lang];
   
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const downloadUrl = 'https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip';
+  const checkoutUrl = 'https://ghostlayer.lemonsqueezy.com/checkout/buy/3a2ae4ca-d3d0-4095-beb0-169b278fb091';
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white overflow-x-hidden">
@@ -358,15 +652,18 @@ export default function GhostLayerLanding() {
           </div>
           
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-zinc-400 hover:text-white transition-colors">Возможности</a>
-            <a href="#security" className="text-zinc-400 hover:text-white transition-colors">Безопасность</a>
-            <a href="#pricing" className="text-zinc-400 hover:text-white transition-colors">Цены</a>
+            <a href="#features" className="text-zinc-400 hover:text-white transition-colors">{t.nav.features}</a>
+            <a href="#security" className="text-zinc-400 hover:text-white transition-colors">{t.nav.security}</a>
+            <a href="#pricing" className="text-zinc-400 hover:text-white transition-colors">{t.nav.pricing}</a>
           </div>
           
-          <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-5 py-2.5 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2">
-            Скачать бесплатно
-            <Download className="w-4 h-4" />
-          </a>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher lang={lang} setLang={setLang} />
+            <a href={downloadUrl} className="px-5 py-2.5 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2">
+              {t.nav.download}
+              <Download className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -374,7 +671,6 @@ export default function GhostLayerLanding() {
       <section className="relative min-h-screen flex items-center justify-center pt-20">
         <ParticleField />
         
-        {/* Gradient orbs */}
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-[128px]" />
         <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-[128px]" />
         
@@ -383,31 +679,30 @@ export default function GhostLayerLanding() {
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-8">
                 <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                <span className="text-emerald-400 text-sm font-medium">100% Offline • Ваши данные остаются у вас</span>
+                <span className="text-emerald-400 text-sm font-medium">{t.hero.badge}</span>
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-                Используйте AI
+                {t.hero.title1}
                 <br />
-                <span className="text-zinc-500">без утечки</span>
+                <span className="text-zinc-500">{t.hero.title2}</span>
                 <br />
                 <span className="block h-[1.8em] mb-4">
-                  <TypeWriter words={['имён клиентов', 'паспортных данных', 'номеров телефонов', 'банковских счетов', 'коммерческой тайны']} />
+                  <TypeWriter words={t.hero.typewriter} />
                 </span>
               </h1>
               
               <p className="text-xl text-zinc-400 mb-8 max-w-lg leading-relaxed">
-                GhostLayer автоматически скрывает конфиденциальные данные в документах перед отправкой в ИИ-сервисы. 
-                Полностью локально. Никаких серверов.
+                {t.hero.description}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-8 py-4 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 flex items-center justify-center gap-2 text-lg">
-                  Скачать для Windows
+                <a href={downloadUrl} className="px-8 py-4 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 flex items-center justify-center gap-2 text-lg">
+                  {t.hero.downloadBtn}
                   <Download className="w-5 h-5" />
                 </a>
                 <button className="px-8 py-4 bg-zinc-800 text-white font-semibold rounded-xl hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2 text-lg border border-zinc-700">
-                  Смотреть демо
+                  {t.hero.demoBtn}
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
@@ -415,21 +710,21 @@ export default function GhostLayerLanding() {
               <div className="flex items-center gap-8 mt-10 pt-10 border-t border-zinc-800">
                 <div>
                   <div className="text-3xl font-bold text-white"><AnimatedNumber value={28} /></div>
-                  <div className="text-zinc-500 text-sm">паттернов PII</div>
+                  <div className="text-zinc-500 text-sm">{t.hero.stats.patterns}</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-white">&lt;2<span className="text-emerald-400">сек</span></div>
-                  <div className="text-zinc-500 text-sm">запуск приложения</div>
+                  <div className="text-3xl font-bold text-white">&lt;2<span className="text-emerald-400">{lang === 'ru' ? 'сек' : 'sec'}</span></div>
+                  <div className="text-zinc-500 text-sm">{t.hero.stats.startup}</div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">0</div>
-                  <div className="text-zinc-500 text-sm">сетевых соединений</div>
+                  <div className="text-zinc-500 text-sm">{t.hero.stats.connections}</div>
                 </div>
               </div>
             </div>
             
             <div className="relative">
-              <AnonymizationDemo />
+              <AnonymizationDemo t={t} />
             </div>
           </div>
         </div>
@@ -440,33 +735,32 @@ export default function GhostLayerLanding() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="text-red-400">Shadow AI</span> — тихая угроза
+              <span className="text-red-400">Shadow AI</span> {t.problem.title}
             </h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              77% сотрудников уже используют ИИ на работе. 
-              Вы не можете запретить ИИ, но можете сделать его использование безопасным.
+              {t.problem.subtitle}
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
-              <div className="text-6xl font-bold text-red-400 mb-4">$4.44M</div>
-              <div className="text-white font-semibold mb-2">Средняя стоимость утечки</div>
-              <div className="text-zinc-500 text-sm mb-3">Профилактика дешевле в сотни раз</div>
+              <div className="text-6xl font-bold text-red-400 mb-4">{t.problem.stat1.value}</div>
+              <div className="text-white font-semibold mb-2">{t.problem.stat1.label}</div>
+              <div className="text-zinc-500 text-sm mb-3">{t.problem.stat1.desc}</div>
               <div className="text-zinc-600 text-xs">IBM, Cost of a Data Breach Report 2025</div>
             </div>
             
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
-              <div className="text-6xl font-bold text-red-400 mb-4">77%</div>
-              <div className="text-white font-semibold mb-2">Сотрудников копируют данные в ИИ</div>
-              <div className="text-zinc-500 text-sm mb-3">Запреты не работают</div>
+              <div className="text-6xl font-bold text-red-400 mb-4">{t.problem.stat2.value}</div>
+              <div className="text-white font-semibold mb-2">{t.problem.stat2.label}</div>
+              <div className="text-zinc-500 text-sm mb-3">{t.problem.stat2.desc}</div>
               <div className="text-zinc-600 text-xs">LayerX Security, AI Data Security Report 2025</div>
             </div>
             
             <div className="bg-red-500/5 rounded-2xl p-8 border border-red-500/20">
-              <div className="text-6xl font-bold text-red-400 mb-4">86%</div>
-              <div className="text-white font-semibold mb-2">Компаний «слепы» к AI-потокам</div>
-              <div className="text-zinc-500 text-sm mb-3">GhostLayer возвращает контроль</div>
+              <div className="text-6xl font-bold text-red-400 mb-4">{t.problem.stat3.value}</div>
+              <div className="text-white font-semibold mb-2">{t.problem.stat3.label}</div>
+              <div className="text-zinc-500 text-sm mb-3">{t.problem.stat3.desc}</div>
               <div className="text-zinc-600 text-xs">Kiteworks, AI Security Gap Report 2025</div>
             </div>
           </div>
@@ -478,31 +772,15 @@ export default function GhostLayerLanding() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Для профессионалов с <span className="text-emerald-400">ответственностью</span>
+              {t.industries.title} <span className="text-emerald-400">{t.industries.titleHighlight}</span>
             </h2>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <IndustryCard 
-              icon={Scale} 
-              title="Юристы" 
-              pain="Адвокатская тайна и риск дисциплинарки — один промпт может стоить лицензии" 
-            />
-            <IndustryCard 
-              icon={Briefcase} 
-              title="Финансисты" 
-              pain="SEC штрафует за off-channel коммуникации — AI-чаты попадают под запрет" 
-            />
-            <IndustryCard 
-              icon={Users} 
-              title="HR-специалисты" 
-              pain="GDPR и право на забвение — резюме с PII нельзя отправлять в облако" 
-            />
-            <IndustryCard 
-              icon={Heart} 
-              title="Медики" 
-              pain="HIPAA требует BAA — бесплатные ИИ-сервисы не подходят для PHI" 
-            />
+            <IndustryCard icon={Scale} title={t.industries.lawyers.title} pain={t.industries.lawyers.pain} />
+            <IndustryCard icon={Briefcase} title={t.industries.finance.title} pain={t.industries.finance.pain} />
+            <IndustryCard icon={Users} title={t.industries.hr.title} pain={t.industries.hr.pain} />
+            <IndustryCard icon={Heart} title={t.industries.medical.title} pain={t.industries.medical.pain} />
           </div>
         </div>
       </section>
@@ -512,45 +790,20 @@ export default function GhostLayerLanding() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Три уровня защиты <span className="text-emerald-400">в одном клике</span>
+              {t.features.title} <span className="text-emerald-400">{t.features.titleHighlight}</span>
             </h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              GhostLayer комбинирует ваши правила, 28 regex-паттернов и NLP-модели
-              для достижения высокой точности распознавания
+              {t.features.subtitle}
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard
-              icon={Brain}
-              title="Learning System"
-              description="Один клик по слову — и оно скрывается навсегда. GhostLayer учится на ваших правках и становится умнее с каждым документом."
-            />
-            <FeatureCard
-              icon={Zap}
-              title="Мгновенная обработка"
-              description="Документы обрабатываются локально за секунды. Никаких задержек сети, никаких очередей — всё происходит на вашем устройстве."
-            />
-            <FeatureCard
-              icon={Eye}
-              title="Entity Inspector"
-              description="Полный контроль: просматривайте все найденные сущности и решайте сами, что скрывать, а что оставить для контекста."
-            />
-            <FeatureCard
-              icon={FileText}
-              title="Поддержка форматов"
-              description="Работает с PDF, DOCX и TXT файлами. Загрузите документ и получите анонимизированную версию за секунды."
-            />
-            <FeatureCard
-              icon={Copy}
-              title="Prompt Library"
-              description="Сохраняйте шаблоны промптов и копируйте анонимизированный текст вместе с инструкцией одной кнопкой."
-            />
-            <FeatureCard
-              icon={Columns}
-              title="Side-by-Side сравнение"
-              description="Оригинал и анонимизированная версия рядом. Синхронная прокрутка и подсветка замен для полного контроля."
-            />
+            <FeatureCard icon={Brain} title={t.features.learning.title} description={t.features.learning.desc} />
+            <FeatureCard icon={Zap} title={t.features.instant.title} description={t.features.instant.desc} />
+            <FeatureCard icon={Eye} title={t.features.inspector.title} description={t.features.inspector.desc} />
+            <FeatureCard icon={FileText} title={t.features.formats.title} description={t.features.formats.desc} />
+            <FeatureCard icon={Copy} title={t.features.prompts.title} description={t.features.prompts.desc} />
+            <FeatureCard icon={Columns} title={t.features.sideBySide.title} description={t.features.sideBySide.desc} />
           </div>
         </div>
       </section>
@@ -562,30 +815,24 @@ export default function GhostLayerLanding() {
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-6">
                 <Lock className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400 text-sm font-medium">Zero-Trust Architecture</span>
+                <span className="text-emerald-400 text-sm font-medium">{t.security.badge}</span>
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Безопасность — <span className="text-emerald-400">не опция</span>
+                {t.security.title} <span className="text-emerald-400">{t.security.titleHighlight}</span>
               </h2>
               
               <p className="text-xl text-zinc-400 mb-8">
-                GhostLayer спроектирован так, что утечка данных физически невозможна. 
-                Ваши документы никогда не покидают оперативную память.
+                {t.security.subtitle}
               </p>
               
               <div className="space-y-4">
-                {[
-                  { icon: Server, text: '100% Offline — нет сетевых соединений' },
-                  { icon: Cpu, text: 'Документы только в RAM — никогда на диске' },
-                  { icon: Lock, text: 'AES-256-GCM шифрование правил' },
-                  { icon: Shield, text: 'Machine-bound ключи — база бесполезна на другом ПК' },
-                ].map((item, i) => (
+                {[Server, Cpu, Lock, Shield].map((Icon, i) => (
                   <div key={i} className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
                     <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center">
-                      <item.icon className="w-5 h-5 text-emerald-400" />
+                      <Icon className="w-5 h-5 text-emerald-400" />
                     </div>
-                    <span className="text-white">{item.text}</span>
+                    <span className="text-white">{t.security.points[i]}</span>
                   </div>
                 ))}
               </div>
@@ -597,28 +844,21 @@ export default function GhostLayerLanding() {
                   <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6">
                     <Shield className="w-12 h-12 text-emerald-400" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Данные под защитой</h3>
+                  <h3 className="text-2xl font-bold text-white mb-4">{t.security.cardTitle}</h3>
                   <div className="space-y-3 text-left w-full max-w-sm">
-                    <div className="flex items-center gap-3 p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/10">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                      <span className="text-zinc-300">Документы обрабатываются локально</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/10">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                      <span className="text-zinc-300">Не сохраняются на диск</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/10">
-                      <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                      <span className="text-zinc-300">Удаляются после закрытия</span>
-                    </div>
+                    {t.security.cardPoints.map((point, i) => (
+                      <div key={i} className="flex items-center gap-3 p-3 bg-emerald-500/5 rounded-lg border border-emerald-500/10">
+                        <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                        <span className="text-zinc-300">{point}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
               
-              {/* Compliance badges */}
               <div className="flex gap-4 mt-6 justify-center">
                 <div className="px-4 py-2 bg-zinc-800 rounded-lg text-zinc-400 text-sm">GDPR ✓</div>
-                <div className="px-4 py-2 bg-zinc-800 rounded-lg text-zinc-400 text-sm">152-ФЗ ✓</div>
+                <div className="px-4 py-2 bg-zinc-800 rounded-lg text-zinc-400 text-sm">{lang === 'ru' ? '152-ФЗ' : 'CCPA'} ✓</div>
                 <div className="px-4 py-2 bg-zinc-800 rounded-lg text-zinc-400 text-sm">HIPAA Ready</div>
               </div>
             </div>
@@ -631,18 +871,14 @@ export default function GhostLayerLanding() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Три шага до <span className="text-emerald-400">безопасного AI</span>
+              {t.howItWorks.title} <span className="text-emerald-400">{t.howItWorks.titleHighlight}</span>
             </h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: '01', title: 'Загрузите документ', desc: 'Откройте PDF, DOCX или TXT файл в GhostLayer' },
-              { step: '02', title: 'Проверьте результат', desc: 'Просмотрите Side-by-Side сравнение и скорректируйте при необходимости' },
-              { step: '03', title: 'Скопируйте в ИИ', desc: 'Нажмите «Copy» и вставьте безопасный текст в любой ИИ-сервис' },
-            ].map((item, i) => (
+            {t.howItWorks.steps.map((item, i) => (
               <div key={i} className="relative">
-                <div className="text-8xl font-bold text-emerald-500/10 absolute -top-6 -left-2">{item.step}</div>
+                <div className="text-8xl font-bold text-emerald-500/10 absolute -top-6 -left-2">0{i + 1}</div>
                 <div className="relative pt-12">
                   <h3 className="text-2xl font-bold text-white mb-3">{item.title}</h3>
                   <p className="text-zinc-400">{item.desc}</p>
@@ -658,69 +894,51 @@ export default function GhostLayerLanding() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Простые цены. <span className="text-emerald-400">Без подписок.</span>
+              {t.pricing.title} <span className="text-emerald-400">{t.pricing.titleHighlight}</span>
             </h2>
             <p className="text-xl text-zinc-400">
-              Заплатите один раз — владейте навсегда. Никаких ежемесячных списаний.
+              {t.pricing.subtitle}
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <PricingCard
-              name="Free Trial"
-              price="7 дней"
-              period="бесплатно"
-              features={[
-                'Безлимитные документы',
-                'Все 28 паттернов PII',
-                'Русский и английский',
-                'Entity Inspector',
-                'Prompt Library',
-                'Side-by-Side просмотр',
-              ]}
-              cta="Начать бесплатно"
-              onClick={() => window.location.href = 'https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip'}
+              name={t.pricing.free.name}
+              price={t.pricing.free.price}
+              period={t.pricing.free.period}
+              features={t.pricing.free.features}
+              cta={t.pricing.free.cta}
+              onClick={() => window.location.href = downloadUrl}
             />
             
             <PricingCard
-              name="Professional"
-              price="$199"
+              name={t.pricing.pro.name}
+              price={t.pricing.pro.price}
               popular
-              features={[
-                'Всё из Free Trial',
-                'Learning System — ИИ учится на ваших правках',
-                'Пользовательские правила анонимизации',
-                '1 год обновлений и поддержки',
-                '30-дневная гарантия возврата',
-              ]}
-              cta="Купить лицензию"
-              onClick={() => window.location.href = 'https://ghostlayer.lemonsqueezy.com/checkout/buy/3a2ae4ca-d3d0-4095-beb0-169b278fb091'}
+              badge={t.pricing.badge}
+              features={t.pricing.pro.features}
+              cta={t.pricing.pro.cta}
+              onClick={() => window.location.href = checkoutUrl}
             />
             
             <PricingCard
-              name="Team"
-              price="Soon"
-              period="скоро"
-              features={[
-                'Всё из Professional',
-                '5 рабочих мест',
-                'Общая база правил',
-                'Audit log',
-                'Интеграции',
-              ]}
-              cta="Оставить заявку"
+              name={t.pricing.team.name}
+              price={t.pricing.team.price}
+              period={t.pricing.team.period}
+              features={t.pricing.team.features}
+              cta={t.pricing.team.cta}
               onClick={() => setShowContactModal(true)}
             />
           </div>
           
           <div className="text-center mt-12">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 mb-4">
-              <span className="text-zinc-400">Промокод:</span>
+              <span className="text-zinc-400">{t.pricing.promo}</span>
               <code className="text-emerald-400 font-bold text-lg">NEWGHOST50</code>
-              <span className="text-zinc-500">= скидка 50%</span>
+              <span className="text-zinc-500">{t.pricing.promoDiscount}</span>
             </div>
             <p className="text-zinc-500">
-              7 дней бесплатно • 30-дневная гарантия возврата • Только для Windows
+              {t.pricing.footer}
             </p>
           </div>
         </div>
@@ -730,19 +948,19 @@ export default function GhostLayerLanding() {
       <section className="py-24 bg-gradient-to-b from-zinc-900/50 to-zinc-950">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Начните защищать данные <span className="text-emerald-400">сегодня</span>
+            {t.cta.title} <span className="text-emerald-400">{t.cta.titleHighlight}</span>
           </h2>
           <p className="text-xl text-zinc-400 mb-8">
-            7 дней бесплатно. 30-дневная гарантия возврата. Без регистрации.
+            {t.cta.subtitle}
           </p>
           
-          <a href="https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip" className="px-10 py-5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 text-xl flex items-center justify-center gap-3 mx-auto">
-            Скачать GhostLayer для Windows
+          <a href={downloadUrl} className="px-10 py-5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-all hover:transform hover:scale-105 text-xl inline-flex items-center justify-center gap-3">
+            {t.cta.button}
             <Download className="w-6 h-6" />
           </a>
           
           <p className="text-zinc-600 mt-6 text-sm">
-            v1.0.0 • ~220 MB • Только для Windows
+            v1.0.0 • ~220 MB • {t.cta.version}
           </p>
           <p className="text-zinc-700 mt-2 text-xs font-mono">
             SHA-256: 1ac6cd78ce8029c31aa817c2a294ce2f03885efabe6f6022137939f393e084ef
@@ -762,19 +980,19 @@ export default function GhostLayerLanding() {
             </div>
             
             <div className="flex items-center gap-8 text-zinc-500 text-sm">
-              <a href="#features" className="hover:text-white transition-colors">Документация</a>
-              <a href="mailto:support@ghostlayerapp.com" className="hover:text-white transition-colors">Контакты</a>
+              <a href="#features" className="hover:text-white transition-colors">{t.footer.docs}</a>
+              <a href="mailto:support@ghostlayerapp.com" className="hover:text-white transition-colors">{t.footer.contact}</a>
             </div>
             
             <div className="text-zinc-600 text-sm">
-              © 2025 GhostLayer. Все права защищены.
+              {t.footer.rights}
             </div>
           </div>
         </div>
       </footer>
 
       {/* Contact Modal */}
-      <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
+      <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} t={t} />
     </div>
   );
 }
