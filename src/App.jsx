@@ -250,7 +250,7 @@ const ContactModal = ({ isOpen, onClose }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          access_key: '/* Заменить на реальный ключ */',
+          access_key: 'bf442846-7437-4772-9186-23c4ca733416',
           name: formData.name,
           email: formData.email,
           message: formData.message,
