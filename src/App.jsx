@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Lock, Zap, Brain, Eye, EyeOff, Copy, Download, CheckCircle, ChevronRight, Globe, Server, Cpu, FileText, Users, Briefcase, Scale, Heart, Columns } from 'lucide-react';
+import { Shield, Lock, Zap, Brain, Eye, EyeOff, Copy, Download, CheckCircle, ChevronRight, Globe, Server, Cpu, FileText, Users, Briefcase, Scale, Heart, Columns, X } from 'lucide-react';
 
 // Animated counter component
 const AnimatedNumber = ({ value, suffix = '' }) => {
@@ -195,7 +195,7 @@ const FeatureCard = ({ icon: Icon, title, description, highlight }) => (
 );
 
 // Pricing card component
-const PricingCard = ({ name, price, originalPrice, period, features, popular, cta }) => (
+const PricingCard = ({ name, price, originalPrice, period, features, popular, cta, href, onClick }) => (
   <div className={`relative bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 rounded-2xl p-8 border ${
     popular ? 'border-emerald-500/50' : 'border-zinc-800'
   } transition-all hover:transform hover:scale-[1.02] flex flex-col h-full`}>
@@ -233,6 +233,96 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
   </div>
 );
 
+// Contact Modal component
+const ContactModal = ({ isOpen, onClose }) => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
+  
+  if (!isOpen) return null;
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    
+    // Using Web3Forms (free)
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: '/* Заменить на реальный ключ */',
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          subject: 'GhostLayer Team - Заявка'
+        })
+      });
+      if (response.ok) {
+        setStatus('success');
+        setTimeout(() => { onClose(); setStatus(''); setFormData({ name: '', email: '', message: '' }); }, 2000);
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div className="relative bg-zinc-900 rounded-2xl p-8 max-w-md w-full border border-zinc-800" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-white">
+          <X className="w-5 h-5" />
+        </button>
+        <h3 className="text-2xl font-bold text-white mb-2">Заявка на Team</h3>
+        <p className="text-zinc-400 mb-6">Мы свяжемся с вами, когда Team-версия будет готова</p>
+        
+        {status === 'success' ? (
+          <div className="text-center py-8">
+            <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+            <p className="text-white">Заявка отправлена!</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Ваше имя"
+              required
+              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
+              value={formData.name}
+              onChange={e => setFormData({...formData, name: e.target.value})}
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              required
+              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
+              value={formData.email}
+              onChange={e => setFormData({...formData, email: e.target.value})}
+            />
+            <textarea
+              placeholder="Сообщение (опционально)"
+              rows={3}
+              className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none resize-none"
+              value={formData.message}
+              onChange={e => setFormData({...formData, message: e.target.value})}
+            />
+            <button
+              type="submit"
+              disabled={status === 'sending'}
+              className="w-full py-3 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors disabled:opacity-50"
+            >
+              {status === 'sending' ? 'Отправка...' : 'Отправить заявку'}
+            </button>
+            {status === 'error' && <p className="text-red-400 text-sm text-center">Ошибка. Попробуйте позже.</p>}
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Industry card
 const IndustryCard = ({ icon: Icon, title, pain }) => (
   <div className="bg-zinc-900/50 rounded-xl p-5 border border-zinc-800 hover:border-zinc-700 transition-colors">
@@ -245,6 +335,7 @@ const IndustryCard = ({ icon: Icon, title, pain }) => (
 // Main landing page component
 export default function GhostLayerLanding() {
   const [scrolled, setScrolled] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -588,6 +679,7 @@ export default function GhostLayerLanding() {
                 'Side-by-Side просмотр',
               ]}
               cta="Начать бесплатно"
+              onClick={() => window.location.href = 'https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip'}
             />
             
             <PricingCard
@@ -603,6 +695,7 @@ export default function GhostLayerLanding() {
                 '30-дневная гарантия возврата',
               ]}
               cta="Купить лицензию"
+              onClick={() => window.location.href = 'mailto:support@ghostlayerapp.com?subject=GhostLayer%20Professional%20License'}
             />
             
             <PricingCard
@@ -617,12 +710,13 @@ export default function GhostLayerLanding() {
                 'Интеграции',
               ]}
               cta="Оставить заявку"
+              onClick={() => setShowContactModal(true)}
             />
           </div>
           
           <div className="text-center mt-12">
             <p className="text-zinc-500">
-              7 дней бесплатно • 30-дневная гарантия возврата • Windows
+              7 дней бесплатно • 30-дневная гарантия возврата • Только для Windows
             </p>
           </div>
         </div>
@@ -644,7 +738,7 @@ export default function GhostLayerLanding() {
           </a>
           
           <p className="text-zinc-600 mt-6 text-sm">
-            v1.0.0 • ~220 MB • Windows
+            v1.0.0 • ~220 MB • Только для Windows
           </p>
           <p className="text-zinc-700 mt-2 text-xs font-mono">
             SHA-256: 1ac6cd78ce8029c31aa817c2a294ce2f03885efabe6f6022137939f393e084ef
@@ -664,9 +758,8 @@ export default function GhostLayerLanding() {
             </div>
             
             <div className="flex items-center gap-8 text-zinc-500 text-sm">
-              <a href="#" className="hover:text-white transition-colors">Документация</a>
-              <a href="#" className="hover:text-white transition-colors">Политика конфиденциальности</a>
-              <a href="#" className="hover:text-white transition-colors">Контакты</a>
+              <a href="#features" className="hover:text-white transition-colors">Документация</a>
+              <a href="mailto:support@ghostlayerapp.com" className="hover:text-white transition-colors">Контакты</a>
             </div>
             
             <div className="text-zinc-600 text-sm">
@@ -675,6 +768,9 @@ export default function GhostLayerLanding() {
           </div>
         </div>
       </footer>
+
+      {/* Contact Modal */}
+      <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
     </div>
   );
 }
