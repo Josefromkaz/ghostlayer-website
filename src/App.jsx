@@ -478,7 +478,7 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
     popular ? 'border-emerald-500/50' : 'border-zinc-800'
   } transition-all hover:transform hover:scale-[1.02] flex flex-col h-full`}>
     {popular && badge && (
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 rounded-full text-black text-sm font-semibold">
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 rounded-full text-black text-sm font-semibold whitespace-nowrap text-center">
         {badge}
       </div>
     )}
@@ -624,7 +624,7 @@ const LanguageSwitcher = ({ lang, setLang }) => (
 export default function GhostLayerLanding() {
   const [scrolled, setScrolled] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const [lang, setLang] = useState('ru');
+  const [lang, setLang] = useState('en');
   
   const t = translations[lang];
   
