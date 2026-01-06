@@ -201,7 +201,7 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
   } transition-all hover:transform hover:scale-[1.02] flex flex-col h-full`}>
     {popular && (
       <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 rounded-full text-black text-sm font-semibold">
-        🔥 Скидка 50%
+        🎁 $99 с промокодом
       </div>
     )}
     
@@ -684,8 +684,7 @@ export default function GhostLayerLanding() {
             
             <PricingCard
               name="Professional"
-              price="$99"
-              originalPrice="$199"
+              price="$199"
               popular
               features={[
                 'Всё из Free Trial',
@@ -695,7 +694,7 @@ export default function GhostLayerLanding() {
                 '30-дневная гарантия возврата',
               ]}
               cta="Купить лицензию"
-              onClick={() => window.location.href = 'mailto:support@ghostlayerapp.com?subject=GhostLayer%20Professional%20License'}
+              onClick={() => window.location.href = 'https://ghostlayer.lemonsqueezy.com/checkout/buy/3a2ae4ca-d3d0-4095-beb0-169b278fb091'}
             />
             
             <PricingCard
@@ -715,6 +714,11 @@ export default function GhostLayerLanding() {
           </div>
           
           <div className="text-center mt-12">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 mb-4">
+              <span className="text-zinc-400">Промокод:</span>
+              <code className="text-emerald-400 font-bold text-lg">NEWGHOST50</code>
+              <span className="text-zinc-500">= скидка 50%</span>
+            </div>
             <p className="text-zinc-500">
               7 дней бесплатно • 30-дневная гарантия возврата • Только для Windows
             </p>
