@@ -108,17 +108,18 @@ Email: [EMAIL_1]
       promoDiscount: '= скидка 50%',
       footer: '7 дней бесплатно • 30-дневная гарантия возврата • Только для Windows',
       free: {
-        name: 'Free Trial',
-        price: '7 дней',
-        period: 'бесплатно',
+        name: 'Free',
+        price: '$0',
+        period: 'навсегда',
         features: ['Безлимитные документы', 'Все 28 паттернов PII', 'Русский и английский', 'Entity Inspector', 'Prompt Library', 'Side-by-Side просмотр'],
-        cta: 'Начать бесплатно',
+        cta: 'Скачать бесплатно',
       },
       pro: {
         name: 'Professional',
         price: '$199',
-        features: ['Всё из Free Trial', 'Learning System — ИИ учится на ваших правках', 'Пользовательские правила анонимизации', '1 год обновлений и поддержки', '30-дневная гарантия возврата'],
-        cta: 'Купить лицензию',
+        trial: '7 дней бесплатно',
+        features: ['Всё из Free', 'Learning System — ИИ учится на ваших правках', 'Пользовательские правила анонимизации', '1 год обновлений и поддержки', '30-дневная гарантия возврата'],
+        cta: 'Попробовать бесплатно',
       },
       team: {
         name: 'Team',
@@ -257,17 +258,18 @@ Routing: [ROUTING_1]`,
       promoDiscount: '= 50% off',
       footer: '7-day free trial • 30-day money-back guarantee • Windows only',
       free: {
-        name: 'Free Trial',
-        price: '7 days',
-        period: 'free',
+        name: 'Free',
+        price: '$0',
+        period: 'forever',
         features: ['Unlimited documents', 'All 28 PII patterns', 'Russian and English', 'Entity Inspector', 'Prompt Library', 'Side-by-Side view'],
-        cta: 'Start Free',
+        cta: 'Download Free',
       },
       pro: {
         name: 'Professional',
         price: '$199',
-        features: ['Everything in Free Trial', 'Learning System — AI learns from your edits', 'Custom anonymization rules', '1 year of updates and support', '30-day money-back guarantee'],
-        cta: 'Buy License',
+        trial: '7-day free trial',
+        features: ['Everything in Free', 'Learning System — AI learns from your edits', 'Custom anonymization rules', '1 year of updates and support', '30-day money-back guarantee'],
+        cta: 'Start Free Trial',
       },
       team: {
         name: 'Team',
@@ -473,7 +475,7 @@ const FeatureCard = ({ icon: Icon, title, description, highlight }) => (
 );
 
 // Pricing card component
-const PricingCard = ({ name, price, originalPrice, period, features, popular, cta, badge, onClick }) => (
+const PricingCard = ({ name, price, originalPrice, period, trial, features, popular, cta, badge, onClick }) => (
   <div className={`relative bg-gradient-to-br from-zinc-900/90 to-zinc-900/50 rounded-2xl p-8 border ${
     popular ? 'border-emerald-500/50' : 'border-zinc-800'
   } transition-all hover:transform hover:scale-[1.02] flex flex-col h-full`}>
@@ -484,13 +486,19 @@ const PricingCard = ({ name, price, originalPrice, period, features, popular, ct
     )}
     
     <h3 className="text-2xl font-bold text-white mb-2">{name}</h3>
-    <div className="flex items-baseline gap-2 mb-6">
+    <div className="flex items-baseline gap-2 mb-2">
       {originalPrice && (
         <span className="text-2xl text-zinc-500 line-through">{originalPrice}</span>
       )}
       <span className="text-4xl font-bold text-white">{price}</span>
       {period && <span className="text-zinc-500">{period}</span>}
     </div>
+    {trial && (
+      <div className="text-emerald-400 text-sm font-medium mb-4">
+        ✓ {trial}
+      </div>
+    )}
+    {!trial && <div className="mb-4" />}
     
     <ul className="space-y-3 mb-8 flex-grow">
       {features.map((feature, i) => (
@@ -914,11 +922,12 @@ export default function GhostLayerLanding() {
             <PricingCard
               name={t.pricing.pro.name}
               price={t.pricing.pro.price}
+              trial={t.pricing.pro.trial}
               popular
-              badge={t.pricing.badge}
+              badge={lang === 'ru' ? '🔥 Рекомендуем' : '🔥 Recommended'}
               features={t.pricing.pro.features}
               cta={t.pricing.pro.cta}
-              onClick={() => window.location.href = checkoutUrl}
+              onClick={() => window.location.href = downloadUrl}
             />
             
             <PricingCard
@@ -937,9 +946,15 @@ export default function GhostLayerLanding() {
               <code className="text-emerald-400 font-bold text-lg">NEWGHOST50</code>
               <span className="text-zinc-500">{t.pricing.promoDiscount}</span>
             </div>
-            <p className="text-zinc-500">
-              {t.pricing.footer}
+            <p className="text-zinc-500 mb-4">
+              {lang === 'ru' ? '30-дневная гарантия возврата • Только для Windows' : '30-day money-back guarantee • Windows only'}
             </p>
+            <a 
+              href={checkoutUrl}
+              className="text-emerald-400 hover:text-emerald-300 underline text-sm"
+            >
+              {lang === 'ru' ? 'Уже попробовали? Купить лицензию →' : 'Already tried it? Buy license →'}
+            </a>
           </div>
         </div>
       </section>
