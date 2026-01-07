@@ -68,7 +68,7 @@ Email: [EMAIL_1]
     features: {
       title: 'Три уровня защиты',
       titleHighlight: 'в одном клике',
-      subtitle: 'GhostLayer комбинирует ваши правила, 28 regex-паттернов и NLP-модели для достижения высокой точности распознавания',
+      subtitle: 'Загрузите документ, проверьте результат, скопируйте безопасный текст в любой ИИ-сервис',
       learning: { title: 'Learning System', desc: 'Один клик по слову — и оно скрывается навсегда. GhostLayer учится на ваших правках и становится умнее с каждым документом.' },
       instant: { title: 'Мгновенная обработка', desc: 'Документы обрабатываются локально за секунды. Никаких задержек сети, никаких очередей — всё происходит на вашем устройстве.' },
       inspector: { title: 'Entity Inspector', desc: 'Полный контроль: просматривайте все найденные сущности и решайте сами, что скрывать, а что оставить для контекста.' },
@@ -140,6 +140,49 @@ Email: [EMAIL_1]
       docs: 'Документация',
       contact: 'Контакты',
       rights: '© 2025 GhostLayer. Все права защищены.',
+    },
+    docsModal: {
+      title: 'Документация',
+      subtitle: 'Выберите документ для просмотра',
+      quickStart: 'Быстрый старт',
+      quickStartDesc: 'Начните работу за 5 минут',
+      userGuide: 'Руководство пользователя',
+      userGuideDesc: 'Полное описание всех функций',
+    },
+    faq: {
+      title: 'Частые',
+      titleHighlight: 'вопросы',
+      items: [
+        {
+          q: 'Безопасно ли использовать GhostLayer?',
+          a: 'Да. GhostLayer работает полностью оффлайн — никаких сетевых соединений. Ваши документы обрабатываются только в оперативной памяти и никогда не сохраняются на диск.'
+        },
+        {
+          q: 'Где хранятся мои правила анонимизации?',
+          a: 'Правила хранятся локально на вашем компьютере в зашифрованной базе данных (AES-256-GCM). Ключ привязан к вашему устройству — база бесполезна на другом ПК.'
+        },
+        {
+          q: 'Чем отличается Free от Professional?',
+          a: 'Free-версия включает все базовые функции, но без Learning System. Professional добавляет память — приложение запоминает ваши правки и автоматически применяет их в будущих документах.'
+        },
+        {
+          q: 'Как активировать Professional-лицензию?',
+          a: 'После оплаты вы получите лицензионный ключ на email. Введите его в приложении: Настройки → Лицензия → Активировать.'
+        },
+        {
+          q: 'Есть ли гарантия возврата?',
+          a: 'Да, 30 дней без вопросов. Если продукт вам не подошёл — напишите на support@ghostlayerapp.com, и мы вернём деньги.'
+        },
+        {
+          q: 'Какие форматы файлов поддерживаются?',
+          a: 'PDF, DOCX и TXT. Максимальный размер файла — 50 MB.'
+        },
+      ],
+    },
+    contactModal: {
+      title: 'Связаться с нами',
+      subtitle: 'Ответим в течение 24 часов',
+      emailLabel: 'Или напишите напрямую:',
     },
     modal: {
       title: 'Заявка на Team',
@@ -218,7 +261,7 @@ Routing: [ROUTING_1]`,
     features: {
       title: 'Three layers of protection',
       titleHighlight: 'in one click',
-      subtitle: 'GhostLayer combines your rules, 28 regex patterns, and NLP models to achieve high detection accuracy',
+      subtitle: 'Upload a document, review the results, copy safe text to any AI service',
       learning: { title: 'Learning System', desc: 'One click on a word — and it\'s hidden forever. GhostLayer learns from your edits and gets smarter with every document.' },
       instant: { title: 'Instant Processing', desc: 'Documents are processed locally in seconds. No network delays, no queues — everything happens on your device.' },
       inspector: { title: 'Entity Inspector', desc: 'Full control: review all detected entities and decide what to hide and what to keep for context.' },
@@ -290,6 +333,49 @@ Routing: [ROUTING_1]`,
       docs: 'Documentation',
       contact: 'Contact',
       rights: '© 2025 GhostLayer. All rights reserved.',
+    },
+    docsModal: {
+      title: 'Documentation',
+      subtitle: 'Choose a document to view',
+      quickStart: 'Quick Start',
+      quickStartDesc: 'Get started in 5 minutes',
+      userGuide: 'User Guide',
+      userGuideDesc: 'Complete feature documentation',
+    },
+    faq: {
+      title: 'Frequently Asked',
+      titleHighlight: 'Questions',
+      items: [
+        {
+          q: 'Is GhostLayer safe to use?',
+          a: 'Yes. GhostLayer works completely offline — no network connections. Your documents are processed only in RAM and never saved to disk.'
+        },
+        {
+          q: 'Where are my anonymization rules stored?',
+          a: 'Rules are stored locally on your computer in an encrypted database (AES-256-GCM). The key is bound to your device — the database is useless on another PC.'
+        },
+        {
+          q: 'What\'s the difference between Free and Professional?',
+          a: 'Free version includes all basic features but without Learning System. Professional adds memory — the app remembers your edits and automatically applies them in future documents.'
+        },
+        {
+          q: 'How do I activate a Professional license?',
+          a: 'After payment, you\'ll receive a license key by email. Enter it in the app: Settings → License → Activate.'
+        },
+        {
+          q: 'Is there a money-back guarantee?',
+          a: 'Yes, 30 days no questions asked. If the product doesn\'t work for you — email support@ghostlayerapp.com and we\'ll refund you.'
+        },
+        {
+          q: 'What file formats are supported?',
+          a: 'PDF, DOCX, and TXT. Maximum file size is 50 MB.'
+        },
+      ],
+    },
+    contactModal: {
+      title: 'Contact Us',
+      subtitle: 'We\'ll respond within 24 hours',
+      emailLabel: 'Or email us directly:',
     },
     modal: {
       title: 'Request Team Access',
@@ -608,6 +694,164 @@ const ContactModal = ({ isOpen, onClose, t }) => {
   );
 };
 
+// Documentation Modal
+const DocsModal = ({ isOpen, onClose, t, lang }) => {
+  if (!isOpen) return null;
+  
+  const docs = [
+    { 
+      id: 'quickstart',
+      title: t.docsModal.quickStart, 
+      desc: t.docsModal.quickStartDesc,
+      icon: Zap,
+      url: lang === 'ru' ? '/docs/GhostLayer-QuickStart-RU.pdf' : '/docs/GhostLayer-QuickStart-EN.pdf'
+    },
+    { 
+      id: 'userguide',
+      title: t.docsModal.userGuide, 
+      desc: t.docsModal.userGuideDesc,
+      icon: FileText,
+      url: lang === 'ru' ? '/docs/GhostLayer-UserGuide-RU.pdf' : '/docs/GhostLayer-UserGuide-EN.pdf'
+    },
+  ];
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div className="relative bg-zinc-900 rounded-2xl p-8 max-w-md w-full border border-zinc-800" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-white">
+          <X className="w-5 h-5" />
+        </button>
+        <h3 className="text-2xl font-bold text-white mb-2">{t.docsModal.title}</h3>
+        <p className="text-zinc-400 mb-6">{t.docsModal.subtitle}</p>
+        
+        <div className="space-y-3">
+          {docs.map((doc) => (
+            <a
+              key={doc.id}
+              href={doc.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 p-4 bg-zinc-800/50 rounded-xl border border-zinc-700 hover:border-emerald-500/50 hover:bg-zinc-800 transition-all group"
+            >
+              <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
+                <doc.icon className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div className="flex-1">
+                <div className="text-white font-medium">{doc.title}</div>
+                <div className="text-zinc-500 text-sm">{doc.desc}</div>
+              </div>
+              <Download className="w-5 h-5 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// General Contact Modal
+const GeneralContactModal = ({ isOpen, onClose, t }) => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
+  
+  if (!isOpen) return null;
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: 'bf442846-7437-4772-9186-23c4ca733416',
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          subject: 'GhostLayer - Contact Form'
+        })
+      });
+      if (response.ok) {
+        setStatus('success');
+        setTimeout(() => { onClose(); setStatus(''); setFormData({ name: '', email: '', message: '' }); }, 2000);
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <div className="relative bg-zinc-900 rounded-2xl p-8 max-w-md w-full border border-zinc-800" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-500 hover:text-white">
+          <X className="w-5 h-5" />
+        </button>
+        <h3 className="text-2xl font-bold text-white mb-2">{t.contactModal.title}</h3>
+        <p className="text-zinc-400 mb-6">{t.contactModal.subtitle}</p>
+        
+        {status === 'success' ? (
+          <div className="text-center py-8">
+            <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+            <p className="text-white">{t.modal.success}</p>
+          </div>
+        ) : (
+          <>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                placeholder={t.modal.name}
+                required
+                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
+                value={formData.name}
+                onChange={e => setFormData({...formData, name: e.target.value})}
+              />
+              <input
+                type="email"
+                placeholder={t.modal.email}
+                required
+                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
+                value={formData.email}
+                onChange={e => setFormData({...formData, email: e.target.value})}
+              />
+              <textarea
+                placeholder={t.modal.message}
+                rows={3}
+                required
+                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:border-emerald-500 focus:outline-none resize-none"
+                value={formData.message}
+                onChange={e => setFormData({...formData, message: e.target.value})}
+              />
+              <button
+                type="submit"
+                disabled={status === 'sending'}
+                className="w-full py-3 bg-emerald-500 text-black font-semibold rounded-xl hover:bg-emerald-400 transition-colors disabled:opacity-50"
+              >
+                {status === 'sending' ? t.modal.sending : t.modal.submit}
+              </button>
+              {status === 'error' && <p className="text-red-400 text-sm text-center">{t.modal.error}</p>}
+            </form>
+            
+            <div className="mt-6 pt-6 border-t border-zinc-800">
+              <p className="text-zinc-500 text-sm mb-2">{t.contactModal.emailLabel}</p>
+              <a 
+                href="mailto:support@ghostlayerapp.com" 
+                className="text-emerald-400 hover:text-emerald-300 font-medium"
+              >
+                support@ghostlayerapp.com
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Industry card
 const IndustryCard = ({ icon: Icon, title, pain }) => (
   <div className="bg-zinc-900/50 rounded-xl p-5 border border-zinc-800 hover:border-zinc-700 transition-colors">
@@ -632,6 +876,8 @@ const LanguageSwitcher = ({ lang, setLang }) => (
 export default function GhostLayerLanding() {
   const [scrolled, setScrolled] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showDocsModal, setShowDocsModal] = useState(false);
+  const [showGeneralContactModal, setShowGeneralContactModal] = useState(false);
   const [lang, setLang] = useState('en');
   
   const t = translations[lang];
@@ -959,6 +1205,31 @@ export default function GhostLayerLanding() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-24 bg-gradient-to-b from-zinc-950 to-zinc-900/50">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {t.faq.title} <span className="text-emerald-400">{t.faq.titleHighlight}</span>
+            </h2>
+          </div>
+          
+          <div className="space-y-4">
+            {t.faq.items.map((item, i) => (
+              <details key={i} className="group bg-zinc-900/50 rounded-xl border border-zinc-800 hover:border-zinc-700 transition-colors">
+                <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                  <span className="text-white font-medium pr-4">{item.q}</span>
+                  <ChevronRight className="w-5 h-5 text-zinc-500 group-open:rotate-90 transition-transform flex-shrink-0" />
+                </summary>
+                <div className="px-6 pb-6 text-zinc-400">
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-24 bg-gradient-to-b from-zinc-900/50 to-zinc-950">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -995,8 +1266,8 @@ export default function GhostLayerLanding() {
             </div>
             
             <div className="flex items-center gap-8 text-zinc-500 text-sm">
-              <a href="#features" className="hover:text-white transition-colors">{t.footer.docs}</a>
-              <a href="mailto:support@ghostlayerapp.com" className="hover:text-white transition-colors">{t.footer.contact}</a>
+              <button onClick={() => setShowDocsModal(true)} className="hover:text-white transition-colors">{t.footer.docs}</button>
+              <button onClick={() => setShowGeneralContactModal(true)} className="hover:text-white transition-colors">{t.footer.contact}</button>
             </div>
             
             <div className="text-zinc-600 text-sm">
@@ -1008,6 +1279,12 @@ export default function GhostLayerLanding() {
 
       {/* Contact Modal */}
       <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} t={t} />
+      
+      {/* Documentation Modal */}
+      <DocsModal isOpen={showDocsModal} onClose={() => setShowDocsModal(false)} t={t} lang={lang} />
+      
+      {/* General Contact Modal */}
+      <GeneralContactModal isOpen={showGeneralContactModal} onClose={() => setShowGeneralContactModal(false)} t={t} />
     </div>
   );
 }
