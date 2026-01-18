@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Build Output
+dist/
+dist-electron/
+release/
+build/
+*.exe
+*.dmg
+*.zip
+
+# Environment & Local Settings
+.env
+.env.local
+.vscode/
+.idea/
+.claude/
+.gemini/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary Files (Claude/Gemini)
+tmpclaude-*
+desktop/tmpclaude-*
+
+# System Files
+.DS_Store
+Thumbs.db
+nul
+desktop/nul
+
+# Project specific
+desktop/dist/
+desktop/dist-electron/
+desktop/release/
+desktop/node_modules/

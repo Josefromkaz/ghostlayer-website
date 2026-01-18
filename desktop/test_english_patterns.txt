@@ -1,0 +1,82 @@
+ENGLISH REGEX PATTERNS TEST FILE
+=================================
+
+1. Contract/Agreement Numbers (EN)
+-----------------------------------
+Agreement No.: PSA-2025-0847
+Contract #ABC-123-456
+Policy No. POL-2024-789
+Reference Number: REF/2024/001
+
+2. English Context Persons
+-----------------------------------
+Represented by: Michael Jonathan Richardson
+Project Lead: Jennifer Marie Williams
+Manager: John Anderson Smith
+Name: Amanda Grace Foster
+Witnessed By: Robert Thomas Miller
+
+3. Names with Honorifics
+-----------------------------------
+Mr. John Doe
+Mrs. Jane Elizabeth Smith
+Ms. Amanda Foster
+Dr. Michael Thompson
+Prof. Robert Wilson
+
+4. English Companies
+-----------------------------------
+Apple Inc.
+Silicon Valley Bank
+Microsoft Corporation
+Google LLC
+TechVenture Solutions Inc.
+DataPro Analytics LLC
+
+5. US Full Addresses
+-----------------------------------
+123 Main Street, Springfield, IL 62704
+2847 Innovation Drive, Suite 500, San Francisco, CA 94107
+456 Oak Avenue, Los Angeles, CA 90001-1234
+
+6. US Social Security Numbers
+-----------------------------------
+Valid: 123-45-6789
+Valid: 542-89-7134
+Invalid (should NOT match): 000-12-3456
+Invalid (should NOT match): 666-45-6789
+Invalid (should NOT match): 987-00-1234
+
+7. US Employer ID Numbers
+-----------------------------------
+12-3456789
+84-2957361
+
+8. US Routing Numbers
+-----------------------------------
+Routing Number: 123456789
+ABA: 121140399
+
+9. Bank Account Numbers (Context)
+-----------------------------------
+Account Number: 9876543210
+Account No.: 3384729156
+
+10. Driver's Licenses (Context)
+-----------------------------------
+Driver's License: D1234567
+DL: CA98765432
+
+11. English Text Dates
+-----------------------------------
+January 15, 2025
+December 31, 2024
+March 1 2023
+
+MIXED CONTENT TEST
+-----------------------------------
+This is a test document for Mr. John Doe from Apple Inc.
+His SSN is 123-45-6789 and his Driver's License is DL: D1234567.
+He works at 123 Main Street, Springfield, IL 62704.
+Agreement No.: PSA-2025-0847 was signed on January 15, 2025.
+Routing Number: 123456789, Account Number: 9876543210
