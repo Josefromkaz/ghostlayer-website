@@ -888,7 +888,7 @@ export default function GhostLayerLanding() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const downloadUrl = 'https://github.com/Josefromkaz/ghostlayer-website/releases/download/v1.0.0/GhostLayer_v1.0.0_Windows_x64.zip';
+  const downloadUrl = 'https://github.com/Josefromkaz/ghostlayer-website/releases/download/v2.0.0/GhostLayer_Setup_2.0.0.exe';
   const checkoutUrl = 'https://ghostlayer.lemonsqueezy.com/checkout/buy/3a2ae4ca-d3d0-4095-beb0-169b278fb091';
 
   return (
@@ -1246,10 +1246,10 @@ export default function GhostLayerLanding() {
           </a>
           
           <p className="text-zinc-600 mt-6 text-sm">
-            v1.0.0 • ~220 MB • {t.cta.version}
+            v2.0.0 • ~100 MB • {t.cta.version}
           </p>
           <p className="text-zinc-700 mt-2 text-xs font-mono">
-            SHA-256: 1ac6cd78ce8029c31aa817c2a294ce2f03885efabe6f6022137939f393e084ef
+            SHA-256: 7aa4084ad4ff731727b107e6062c2fbe2080555ffc554a7e71828fdc22146fa4
           </p>
         </div>
       </section>
