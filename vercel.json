@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd ghostlayer-website/website && npm run build",
+  "outputDirectory": "ghostlayer-website/website/dist",
+  "installCommand": "cd ghostlayer-website/website && npm install"
+}
