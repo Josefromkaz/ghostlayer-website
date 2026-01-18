@@ -1,0 +1,5 @@
+{
+  "name": "GhostLayer 2.0",
+  "description": "A secure, local-first document redaction tool powered by transparent regex logic and user learning.",
+  "requestFramePermissions": []
+}

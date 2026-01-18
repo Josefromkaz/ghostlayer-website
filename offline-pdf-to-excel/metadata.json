@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Offline PDF to Excel",
+  "description": "A fully local tool to extract data from PDF files to Excel without internet or AI.",
+  "requestFramePermissions": []
+}

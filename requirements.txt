@@ -1,0 +1,12 @@
+# Core dependencies (versions locked for production release v1.0.0)
+flet==0.28.3
+natasha==1.6.0
+spacy==3.8.11
+pymupdf==1.23.25
+pyperclip==1.11.0
+pytest==9.0.1
+cryptography==44.0.3
+python-docx==1.2.0
+
+# Build dependencies
+pyinstaller==6.11.1

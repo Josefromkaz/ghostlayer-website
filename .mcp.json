@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "devtools": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "D:/npx", "chrome-devtools-mcp"]
+    }
+  }
+}

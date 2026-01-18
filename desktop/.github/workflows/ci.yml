@@ -1,0 +1,52 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    name: Validate & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Type Check
+        run: npx tsc --noEmit
+        
+      # Мы пока не настроили ESLint жестко, но добавим шаг (он может упасть, если правил нет)
+      # - name: Lint
+      #   run: npm run lint
+      
+      - name: Run Tests
+        run: npm test
+
+  build-check:
+    name: Build Check (Multi-OS)
+    needs: validate
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      
+      # Проверяем, что приложение вообще собирается
+      - name: Build React
+        run: npm run build

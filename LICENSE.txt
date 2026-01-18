@@ -1,0 +1,163 @@
+GHOSTLAYER SOFTWARE LICENSE AGREEMENT
+
+Version 1.0.0
+Effective Date: December 27, 2025
+
+Copyright (c) 2025 GhostLayer. All rights reserved.
+
+IMPORTANT: READ CAREFULLY BEFORE USING THIS SOFTWARE
+
+This License Agreement ("Agreement") is a legal agreement between you (either an
+individual or a single entity) and GhostLayer for the GhostLayer software product,
+which includes computer software and may include associated media, printed materials,
+and "online" or electronic documentation ("Software").
+
+By installing, copying, or otherwise using the Software, you agree to be bound by
+the terms of this Agreement. If you do not agree to the terms of this Agreement,
+do not install or use the Software.
+
+1. LICENSE GRANT
+
+Subject to the terms and conditions of this Agreement, GhostLayer grants you a
+limited, non-exclusive, non-transferable license to use the Software.
+
+1.1. FREE LICENSE
+The FREE version grants you the right to:
+- Use the Software for personal or commercial purposes
+- Install the Software on an unlimited number of devices
+- Use core anonymization features (Regex and NLP-based)
+
+The FREE version does NOT include:
+- Memory Rules (Learning System) functionality
+- Priority support
+
+1.2. PRO LICENSE
+The PRO license includes all FREE features plus:
+- Memory Rules (Learning System)
+- Priority email support
+- Future PRO-exclusive features
+
+PRO licenses are sold on a per-device basis and are non-transferable.
+
+2. RESTRICTIONS
+
+You may NOT:
+- Reverse engineer, decompile, or disassemble the Software
+- Modify, adapt, translate, or create derivative works based on the Software
+- Remove or alter any copyright, trademark, or other proprietary notices
+- Rent, lease, loan, sublicense, or transfer the Software to third parties
+- Use the Software for any illegal or unauthorized purpose
+- Circumvent or bypass any license validation mechanisms
+
+3. INTELLECTUAL PROPERTY
+
+The Software is protected by copyright laws and international copyright treaties,
+as well as other intellectual property laws and treaties. GhostLayer retains all
+rights, title, and interest in and to the Software, including all copyrights,
+patents, trade secrets, trademarks, and other intellectual property rights.
+
+4. PRIVACY AND DATA COLLECTION
+
+4.1. Zero Data Policy
+GhostLayer is designed with privacy as a core principle:
+- All document processing occurs locally on your device
+- No documents or document contents are transmitted to external servers
+- The Software operates entirely offline (no network communication)
+- No telemetry, analytics, or usage data is collected
+- No crash reports are sent without your explicit consent
+
+4.2. Local Data Storage
+The Software stores the following data locally on your device:
+- User preferences and settings (unencrypted SQLite database)
+- Memory Rules (encrypted with AES-256-GCM, machine-bound)
+- Prompt Library entries (unencrypted SQLite database)
+
+This data never leaves your device.
+
+4.3. License Validation
+License validation occurs offline using cryptographic signatures. No license
+information is transmitted to external servers.
+
+5. WARRANTY DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NONINFRINGEMENT. GHOSTLAYER DOES NOT WARRANT THAT THE
+SOFTWARE WILL MEET YOUR REQUIREMENTS OR THAT THE OPERATION OF THE SOFTWARE WILL
+BE UNINTERRUPTED OR ERROR-FREE.
+
+6. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL GHOSTLAYER BE LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT, OR
+CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS
+OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY
+OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE,
+EVEN IF GHOSTLAYER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+7. SECURITY AND ANONYMIZATION
+
+7.1. No Guarantee of Absolute Anonymization
+While GhostLayer employs advanced techniques to anonymize sensitive data, no
+automated system can guarantee 100% accuracy. You are responsible for:
+- Reviewing anonymized output before sharing with third parties
+- Manually verifying that sensitive information has been properly masked
+- Understanding the limitations of automated anonymization
+
+7.2. User Responsibility
+You acknowledge that GhostLayer is a tool to assist with anonymization, but the
+ultimate responsibility for protecting sensitive information rests with you.
+
+8. OPEN SOURCE COMPONENTS
+
+The Software includes certain open-source components that are subject to their
+own license terms:
+- Flet (Apache License 2.0)
+- Natasha (MIT License)
+- SpaCy (MIT License)
+- PyMuPDF (AGPL-3.0)
+- Cryptography (Apache License 2.0 / BSD)
+
+See THIRD_PARTY_LICENSES.txt for complete license information.
+
+9. TERMINATION
+
+This Agreement is effective until terminated. Your rights under this Agreement
+will terminate automatically without notice if you fail to comply with any term(s)
+of this Agreement. Upon termination, you must destroy all copies of the Software.
+
+10. UPDATES AND SUPPORT
+
+10.1. Updates
+GhostLayer may provide updates, patches, or new versions of the Software. Updates
+may be subject to additional or different terms.
+
+10.2. Support
+- FREE users: Community support only (GitHub Issues, documentation)
+- PRO users: Priority email support
+
+11. EXPORT RESTRICTIONS
+
+You agree to comply with all applicable international and national laws that apply
+to the Software, including export control regulations.
+
+12. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws of
+[YOUR JURISDICTION], without regard to its conflict of law provisions.
+
+13. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire agreement between you and GhostLayer regarding
+the Software and supersedes all prior or contemporaneous understandings regarding
+such subject matter.
+
+14. CONTACT INFORMATION
+
+For questions about this Agreement or the Software, contact:
+Email: legal@ghostlayer.app
+Website: https://ghostlayer.app
+
+---
+
+BY USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS AGREEMENT,
+UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.
