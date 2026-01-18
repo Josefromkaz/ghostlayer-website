@@ -111,14 +111,14 @@ Email: [EMAIL_1]
         name: 'Free',
         price: '$0',
         period: 'навсегда',
-        features: ['Безлимитные документы', 'Все 28 паттернов PII', 'Русский и английский', 'Entity Inspector', 'Prompt Library', 'Side-by-Side просмотр'],
+        features: ['Безлимитные документы', '5 базовых категорий (Email, Phone, URL, Date, Name)', 'Русский и английский', 'Entity Inspector', 'Prompt Library', 'Side-by-Side просмотр'],
         cta: 'Скачать бесплатно',
       },
       pro: {
         name: 'Professional',
         price: '$199',
         trial: '7 дней бесплатно',
-        features: ['Всё из Free', 'Learning System — ИИ учится на ваших правках', 'Пользовательские правила анонимизации', '1 год обновлений и поддержки', '30-дневная гарантия возврата'],
+        features: ['Всё из Free', '35+ категорий PII (SSN, Credit Cards, Addresses...)', 'Learning System — ИИ учится на ваших правках', 'Whitelist и Custom Regex', '1 год обновлений и поддержки', '30-дневная гарантия возврата'],
         cta: 'Попробовать бесплатно',
       },
       team: {
@@ -163,7 +163,7 @@ Email: [EMAIL_1]
         },
         {
           q: 'Чем отличается Free от Professional?',
-          a: 'Free-версия включает все базовые функции, но без Learning System. Professional добавляет память — приложение запоминает ваши правки и автоматически применяет их в будущих документах.'
+          a: 'Free-версия включает 5 базовых категорий PII (Email, Phone, URL, Date, Name). Professional добавляет 35+ категорий (SSN, Credit Cards, Addresses и др.), Learning System (приложение запоминает правки), Whitelist и Custom Regex для полного контроля.'
         },
         {
           q: 'Как активировать Professional-лицензию?',
@@ -304,14 +304,14 @@ Routing: [ROUTING_1]`,
         name: 'Free',
         price: '$0',
         period: 'forever',
-        features: ['Unlimited documents', 'All 28 PII patterns', 'Russian and English', 'Entity Inspector', 'Prompt Library', 'Side-by-Side view'],
+        features: ['Unlimited documents', '5 basic categories (Email, Phone, URL, Date, Name)', 'Russian and English', 'Entity Inspector', 'Prompt Library', 'Side-by-Side view'],
         cta: 'Download Free',
       },
       pro: {
         name: 'Professional',
         price: '$199',
         trial: '7-day free trial',
-        features: ['Everything in Free', 'Learning System — AI learns from your edits', 'Custom anonymization rules', '1 year of updates and support', '30-day money-back guarantee'],
+        features: ['Everything in Free', '35+ PII categories (SSN, Credit Cards, Addresses...)', 'Learning System — AI learns from your edits', 'Whitelist & Custom Regex', '1 year of updates and support', '30-day money-back guarantee'],
         cta: 'Start Free Trial',
       },
       team: {
@@ -356,7 +356,7 @@ Routing: [ROUTING_1]`,
         },
         {
           q: 'What\'s the difference between Free and Professional?',
-          a: 'Free version includes all basic features but without Learning System. Professional adds memory — the app remembers your edits and automatically applies them in future documents.'
+          a: 'Free version includes 5 basic PII categories (Email, Phone, URL, Date, Name). Professional adds 35+ categories (SSN, Credit Cards, Addresses, etc.), Learning System (app remembers edits), Whitelist, and Custom Regex for full control.'
         },
         {
           q: 'How do I activate a Professional license?',
