@@ -3,6 +3,19 @@ node_modules/
 __pycache__/
 *.pyc
 
+# Cryptographic keys - NEVER commit these!
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+tools/private_key.pem
+tools/public_key.pem
+
+# Licensing tools (keep in separate private repo)
+tools/generate_license.py
+tools/generate_keypair.py
+
 # Build Output
 dist/
 dist-electron/
