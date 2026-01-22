@@ -3,7 +3,7 @@ import { Match, CustomPattern, UserRule, RedactionCategory, SavedPrompt, License
 import { runRedaction, restoreText as restoreTextHelper } from '../services/redactionEngine';
 import { Language } from '../services/translations';
 
-export type EditorFont = 'JetBrains Mono' | 'Fira Code' | 'Roboto Mono' | 'Source Code Pro';
+export type EditorFont = 'JetBrains Mono' | 'Fira Code' | 'Roboto Mono' | 'Source Code Pro' | 'Inter' | 'Lora' | 'Caveat';
 
 // Timer for notifications to prevent overlapping
 let notificationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -55,103 +55,7 @@ function debounce<T extends (...args: unknown[]) => void>(
   };
 }
 
-interface Snapshot {
-  originalText: string;
-  matches: Match[];
-  userRules: UserRule[];
-  customPatterns: CustomPattern[];
-  whitelist: string[];
-}
-
 const MAX_HISTORY = 50;
-
-interface AppState {
-  language: Language;
-  editorFont: EditorFont;
-  originalText: string;
-  matches: Match[];
-  isProcessing: boolean;
-  selectedText: string | null;
-
-  // Deanonymizer (Ghost Loop) State
-  deanonymizerInput: string;
-  deanonymizerOutput: string;
-  setDeanonymizerInput: (val: string) => void;
-
-  // Data from Electron
-  userRules: UserRule[];
-  customPatterns: CustomPattern[];
-  whitelist: string[];
-  whitelistedCategories: string[];
-  prompts: SavedPrompt[];
-  selectedPromptId: string | null;
-
-  licenseInfo: LicenseInfo | null;
-
-  // Upgrade Modal
-  upgradeModal: UpgradeModalState;
-  showUpgradeModal: (reason: UpgradeReason, categoryName?: string) => void;
-  closeUpgradeModal: () => void;
-
-  // Error handling
-  lastError: AppError | null;
-  clearError: () => void;
-
-  // Loading
-  isDataLoaded: boolean;
-  loadData: () => Promise<void>;
-
-  // Notification
-  notification: string | null;
-  setNotification: (msg: string) => void;
-  clearNotification: () => void;
-
-  // History
-  past: Snapshot[];
-  future: Snapshot[];
-  undo: () => void;
-  redo: () => void;
-  snapshot: () => void;
-
-  // Actions
-  setLanguage: (lang: Language) => void;
-  setEditorFont: (font: EditorFont) => void;
-  setOriginalText: (text: string) => void;
-  processText: () => void;
-  toggleMatchRedaction: (matchId: string) => void;
-  excludeMatch: (matchId: string) => void;
-  restoreExcludedMatch: (matchId: string) => void;
-
-  // Memory / User Rules
-  addUserRule: (text: string, category?: RedactionCategory) => Promise<void>;
-  updateUserRuleCategory: (id: string, category: RedactionCategory) => Promise<void>;
-  removeUserRule: (id: string) => Promise<void>;
-
-  // Custom Patterns
-  addCustomPattern: (name: string, regex: string) => Promise<void>;
-  toggleCustomPattern: (id: string) => Promise<void>;
-  removeCustomPattern: (id: string) => Promise<void>;
-
-  // Whitelist
-  addToWhitelist: (text: string) => Promise<void>;
-  removeFromWhitelist: (text: string) => Promise<void>;
-  addCategoryToWhitelist: (category: string) => void;
-  removeCategoryFromWhitelist: (category: string) => void;
-
-  // Prompts
-  addPrompt: (title: string, content: string) => Promise<void>;
-  removePrompt: (id: string) => Promise<void>;
-  setSelectedPromptId: (id: string | null) => void;
-  
-  // Selection
-  setSelectedText: (text: string | null) => void;
-
-  // De-anonymization
-  restoreText: (redactedText: string) => string;
-
-  // Security
-  clearSensitiveData: () => void;
-}
 
 const DEFAULT_TEXT = `Hello, my name is John Doe. My email is john.doe@example.com and my phone number is +7 999 123-45-67.
 
@@ -166,9 +70,8 @@ let debouncedProcessText: (() => void) | null = null;
 
 export const useAppStore = create<AppState>()((set, get) => ({
   language: 'en',
-  editorFont: 'JetBrains Mono',
-  originalText: DEFAULT_TEXT,
-  matches: [],
+  editorFont: 'Lora',
+  originalText: DEFAULT_TEXT,  matches: [],
   userRules: [],
   customPatterns: [],
   whitelist: [],
@@ -311,7 +214,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
         })),
         licenseInfo: license,
         language: (langSetting as Language) || 'en',
-        editorFont: (fontSetting as EditorFont) || 'JetBrains Mono',
+        editorFont: (fontSetting as EditorFont) || 'Lora',
         isDataLoaded: true,
         lastError: null
       });

@@ -3,20 +3,21 @@ import { useAppStore } from '../store/appStore';
 import { TextSegment, RedactionCategory } from '../types';
 import { CATEGORY_COLORS } from '../services/regexPatterns';
 import { TRANSLATIONS } from '../services/translations';
-import { EyeOff, Save, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { EyeOff, Save, ShieldCheck, AlertTriangle, ArrowRight, X } from 'lucide-react';
 
 export const SplitView: React.FC = () => {
-  const { 
-    originalText, 
-    matches, 
-    toggleMatchRedaction, 
-    setOriginalText, 
-    addUserRule, 
+  const {
+    originalText,
+    matches,
+    toggleMatchRedaction,
+    setOriginalText,
+    addUserRule,
     addToWhitelist,
     removeFromWhitelist,
     whitelist,
     setSelectedText,
     language,
+    editorFont,
     setNotification
   } = useAppStore();
 
@@ -26,12 +27,15 @@ export const SplitView: React.FC = () => {
   const isSyncingLeft = useRef(false);
   const isSyncingRight = useRef(false);
   
-  const [selectionPopover, setSelectionPopover] = useState<{x: number, y: number, text: string} | null>(null);
-  const [contextMenu, setContextMenu] = useState<{x: number, y: number, text: string} | null>(null);
+  // Use position: 'fixed' semantics for popovers to avoid clipping
+  // Added 'align' to handle horizontal edge cases
+  const [selectionPopover, setSelectionPopover] = useState<{x: number, y: number, text: string, position: 'top' | 'bottom', align: 'start' | 'center' | 'end'} | null>(null);
+
+  const [contextMenu, setContextMenu] = useState<{x: number, y: number, text: string, currentCategory?: RedactionCategory} | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<RedactionCategory>(RedactionCategory.USER_MEMORY);
   
   // Conflict Resolution State
-  const [conflictModal, setConflictModal] = useState<{text: string} | null>(null);
+  const [conflictModal, setConflictModal] = useState<{text: string, whitelistMatch: string} | null>(null);
 
   // Initial processing
   useEffect(() => {
@@ -75,10 +79,7 @@ export const SplitView: React.FC = () => {
     const result: TextSegment[] = [];
     let currentIndex = 0;
 
-    // Filter out excluded matches - they should not be highlighted
-    const activeMatches = matches.filter(m => !m.excluded);
-
-    activeMatches.forEach((match) => {
+    matches.forEach((match) => {
       // Add non-matching text before
       if (match.start > currentIndex) {
         result.push({
@@ -120,10 +121,43 @@ export const SplitView: React.FC = () => {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
       
+      // Smart Positioning for Selection Popover
+      const popoverWidthEst = 220; // Estimated width of popover
+      const viewportWidth = window.innerWidth;
+      
+      const gap = 10;
+      let y = rect.top - gap;
+      let position: 'top' | 'bottom' = 'top';
+
+      // 1. Vertical Flip: If too close to top edge, flip to bottom
+      if (y < 80) { // 80px buffer for header/margins
+          y = rect.bottom + gap;
+          position = 'bottom';
+      }
+
+      // 2. Horizontal Alignment
+      let x = rect.left + (rect.width / 2);
+      let align: 'start' | 'center' | 'end' = 'center';
+
+      // Check Left Edge
+      if (x - (popoverWidthEst / 2) < 10) {
+          align = 'start';
+          x = rect.left; // Anchor to start of selection
+          if (x < 10) x = 10; // Hard clamp if selection starts off-screen
+      }
+      // Check Right Edge
+      else if (x + (popoverWidthEst / 2) > viewportWidth - 10) {
+          align = 'end';
+          x = rect.right; // Anchor to end of selection
+          if (x > viewportWidth - 10) x = viewportWidth - 10; // Hard clamp
+      }
+
       setSelectionPopover({
-        x: rect.left + (rect.width / 2),
-        y: rect.top - 10,
-        text: text
+        x,
+        y,
+        text,
+        position,
+        align
       });
       setSelectedText(text);
       setSelectedCategory(RedactionCategory.USER_MEMORY);
@@ -133,41 +167,81 @@ export const SplitView: React.FC = () => {
     }
   };
 
-  const addToMemory = async (e: React.MouseEvent) => {
+  const addToMemory = (e: React.MouseEvent) => {
     e.preventDefault(); 
     e.stopPropagation();
     if (selectionPopover) {
       const text = selectionPopover.text.trim();
       
-      // Check for whitelist conflict
-      if (whitelist.includes(text)) {
-        setConflictModal({ text });
+      // Check for PARTIAL whitelist conflict (Substring check)
+      // 1. Text contains whitelist item
+      // 2. Text IS inside a whitelist item
+      const conflict = whitelist.find(w => text.includes(w) || w.includes(text));
+
+      if (conflict) {
+        setConflictModal({ text, whitelistMatch: conflict });
         setSelectionPopover(null);
         window.getSelection()?.removeAllRanges();
         return;
       }
 
-      await addUserRule(text, selectedCategory);
+      addUserRule(text, selectedCategory);
       setSelectionPopover(null);
       window.getSelection()?.removeAllRanges();
     }
   };
 
-  const resolveConflict = async () => {
+  const resolveConflict = () => {
     if (conflictModal) {
-        await removeFromWhitelist(conflictModal.text);
-        await addUserRule(conflictModal.text, RedactionCategory.USER_MEMORY);
+        removeFromWhitelist(conflictModal.whitelistMatch);
+        addUserRule(conflictModal.text, RedactionCategory.USER_MEMORY);
         setNotification(t.notifications.conflictResolved);
         setConflictModal(null);
     }
   };
 
-  const handleContextMenuAction = async (e: React.MouseEvent) => {
+  const handleContextMenuAction = (e: React.MouseEvent, action: 'whitelist' | 'category', payload?: any) => {
     e.stopPropagation();
     if (contextMenu) {
-      await addToWhitelist(contextMenu.text);
-      setContextMenu(null);
+        if (action === 'whitelist') {
+            // Add to global whitelist - this will suppress System and Custom patterns
+            // but User Rules (Memory) can still override
+            addToWhitelist(contextMenu.text);
+        } else if (action === 'category') {
+            addUserRule(contextMenu.text, payload);
+        }
+        setContextMenu(null);
     }
+  };
+
+  const onContextMenu = (e: React.MouseEvent, match: any) => {
+     e.preventDefault();
+     e.stopPropagation();
+     
+     // Smart Positioning for Context Menu
+     const menuWidth = 220;
+     const menuHeight = 300; // estimated max height
+     
+     let x = e.clientX;
+     let y = e.clientY;
+     
+     // Flip Left if close to right edge
+     if (x + menuWidth > window.innerWidth) {
+         x -= menuWidth;
+     }
+     
+     // Flip Up if close to bottom edge
+     if (y + menuHeight > window.innerHeight) {
+         y -= menuHeight;
+     }
+
+     setContextMenu({
+        x,
+        y,
+        text: match.text,
+        currentCategory: match.category
+     });
+     setSelectionPopover(null); 
   };
 
   return (
@@ -175,14 +249,15 @@ export const SplitView: React.FC = () => {
       
       {/* Conflict Modal */}
       {conflictModal && (
-        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/20 backdrop-blur-sm">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-2xl max-w-sm border border-orange-200 dark:border-orange-900 animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center gap-3 text-orange-600 dark:text-orange-400 mb-3">
                     <AlertTriangle size={24} />
                     <h3 className="font-bold text-lg">{t.conflict.title}</h3>
                 </div>
                 <p className="text-slate-600 dark:text-slate-300 mb-6 text-sm">
-                    {t.conflict.message}
+                    {t.conflict.message} <br/>
+                    <span className="text-xs opacity-70 mt-2 block font-mono">"{conflictModal.whitelistMatch}" in "{conflictModal.text}"</span>
                 </p>
                 <div className="flex gap-3 justify-end">
                     <button 
@@ -202,15 +277,20 @@ export const SplitView: React.FC = () => {
         </div>
       )}
 
-      {/* Floating Memory Popover */}
+      {/* Floating Memory Popover (Fixed Position) */}
       {selectionPopover && !contextMenu && !conflictModal && (
         <div 
           style={{ 
             top: selectionPopover.y, 
             left: selectionPopover.x,
-            transform: 'translate(-50%, -100%)'
+            // Calculate Transform X based on alignment
+            transform: `translate(${ 
+                selectionPopover.align === 'center' ? '-50%' : 
+                selectionPopover.align === 'end' ? '-100%' : '0'
+            }, ${selectionPopover.position === 'top' ? '-100%' : '0'})
+            `
           }}
-          className="absolute z-50 mb-2 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 animate-in fade-in zoom-in duration-200 flex flex-col gap-2 min-w-[200px]"
+          className="fixed z-[9999] mb-2 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 animate-in fade-in zoom-in duration-200 flex flex-col gap-2 min-w-[200px]"
           onMouseDown={(e) => e.stopPropagation()} 
         > 
           <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">{t.popoverTitle}</div>
@@ -240,20 +320,34 @@ export const SplitView: React.FC = () => {
         </div>
       )}
 
-      {/* Right Click Context Menu */}
+      {/* Right Click Context Menu (Fixed Position) */}
       {contextMenu && (
         <div 
           style={{ top: contextMenu.y, left: contextMenu.x }}
-          className="absolute z-50 bg-white dark:bg-slate-800 rounded-md shadow-xl border border-slate-200 dark:border-slate-700 py-1 min-w-[160px] animate-in fade-in zoom-in-95 duration-100"
+          className="fixed z-[9999] bg-white dark:bg-slate-800 rounded-md shadow-2xl border border-slate-200 dark:border-slate-700 py-1 min-w-[220px] animate-in fade-in zoom-in-95 duration-100 flex flex-col max-h-[400px]"
           onMouseDown={(e) => e.stopPropagation()}
         >
            <button 
-             onClick={handleContextMenuAction}
-             className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+             onClick={(e) => handleContextMenuAction(e, 'whitelist')}
+             className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 border-b border-slate-100 dark:border-slate-700"
            >
              <ShieldCheck size={14} className="text-brand-600" />
              {t.contextMenu.addToWhitelist}
            </button>
+           
+           <div className="px-4 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-900/50">Change Category</div>
+           <div className="overflow-y-auto custom-scrollbar flex-1">
+               {Object.values(RedactionCategory).map(cat => (
+                   <button 
+                    key={cat}
+                    onClick={(e) => handleContextMenuAction(e, 'category', cat)}
+                    className={`w-full text-left px-4 py-2 text-xs hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2 ${contextMenu.currentCategory === cat ? 'text-brand-600 font-bold bg-brand-50 dark:bg-brand-900/10' : 'text-slate-600 dark:text-slate-400'}`}
+                   >
+                     <div className={`w-1.5 h-1.5 rounded-full ${contextMenu.currentCategory === cat ? 'bg-brand-500' : 'bg-transparent'}`}></div>
+                     {t.categories[cat] || cat}
+                   </button>
+               ))}
+           </div>
         </div>
       )}
 
@@ -276,8 +370,9 @@ export const SplitView: React.FC = () => {
         >
            {segments.map((segment) => {
              if (segment.isMatch && segment.match) {
-               const colorClass = CATEGORY_COLORS[segment.match.category] || 'bg-gray-200 dark:bg-gray-700';
                const isRedacted = segment.match.isRedacted;
+               // Apply style even for non-redacted matches (Whitelist) but with distinction
+               const colorClass = isRedacted ? (CATEGORY_COLORS[segment.match.category] || 'bg-gray-200 dark:bg-gray-700') : 'bg-transparent border-green-200 dark:border-green-900 text-green-600 dark:text-green-400';
                
                return (
                  <span
@@ -287,19 +382,14 @@ export const SplitView: React.FC = () => {
                      e.stopPropagation(); // Prevent selection trigger
                      toggleMatchRedaction(segment.match!.id);
                    }}
-                   onContextMenu={(e) => {
-                     e.preventDefault();
-                     e.stopPropagation();
-                     setContextMenu({ x: e.clientX, y: e.clientY, text: segment.match!.text });
-                     setSelectionPopover(null); // Close other popovers
-                   }}
+                   onContextMenu={(e) => onContextMenu(e, segment.match)}
                    className={`
                      cursor-pointer border-b-2 px-0.5 mx-0.5 rounded-sm transition-all select-none
-                     ${isRedacted ? colorClass : 'bg-transparent border-slate-300 dark:border-slate-600 text-slate-400 opacity-60'}
+                     ${colorClass}
+                     ${isRedacted ? '' : 'hover:bg-green-50 dark:hover:bg-green-900/20'}
                      hover:opacity-100 hover:ring-2 ring-offset-1 ring-brand-200 dark:ring-brand-800
                    `}
-                   title={`Click to ${isRedacted ? 'reveal' : 'redact'} (${segment.match.category}) 
-Right-click for options`}
+                   title={`Category: ${segment.match.category}\nRight-click to change`}
                  >
                    {segment.text}
                  </span>

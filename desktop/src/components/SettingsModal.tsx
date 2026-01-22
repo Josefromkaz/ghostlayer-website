@@ -38,7 +38,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
   const [licenseKey, setLicenseKey] = useState('');
   const [activatingLicense, setActivatingLicense] = useState(false);
 
-  const fonts: EditorFont[] = ['JetBrains Mono', 'Fira Code', 'Roboto Mono', 'Source Code Pro'];
+  const fonts: { name: EditorFont, label: string }[] = [
+      { name: 'JetBrains Mono', label: 'JetBrains Mono (Monospace)' },
+      { name: 'Fira Code', label: 'Fira Code (Monospace)' },
+      { name: 'Roboto Mono', label: 'Roboto Mono (Monospace)' },
+      { name: 'Source Code Pro', label: 'Source Code Pro (Monospace)' },
+      { name: 'Inter', label: 'Inter (Sans-Serif)' },
+      { name: 'Lora', label: 'Lora (Serif)' },
+      { name: 'Caveat', label: 'Caveat (Handwriting)' },
+  ];
 
   const handleAddCustom = async () => {
     if (newCustomName && newCustomRegex) {
@@ -163,16 +171,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     <div className="grid grid-cols-1 gap-2">
                         {fonts.map(font => (
                             <button
-                                key={font}
-                                onClick={() => store.setEditorFont(font)}
-                                style={{ fontFamily: `"${font}", monospace` }}
-                                className={`p-4 text-left rounded-lg border transition-all flex items-center justify-between ${store.editorFont === font ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 ring-1 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-400'}`}
+                                key={font.name}
+                                onClick={() => store.setEditorFont(font.name)}
+                                style={{ fontFamily: `"${font.name}", monospace` }}
+                                className={`p-4 text-left rounded-lg border transition-all flex items-center justify-between ${store.editorFont === font.name ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 ring-1 ring-brand-500' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-400'}`}
                             >
                                 <div className="flex flex-col">
-                                    <span className="text-base">{font}</span>
+                                    <span className="text-base font-bold">{font.label}</span>
                                     <span className="text-xs opacity-60">The quick brown fox jumps over 13 lazy dogs.</span>
                                 </div>
-                                {store.editorFont === font && <div className="w-2 h-2 rounded-full bg-brand-500"></div>}
+                                {store.editorFont === font.name && <div className="w-2 h-2 rounded-full bg-brand-500"></div>}
                             </button>
                         ))}
                     </div>

@@ -16,7 +16,7 @@ export const InspectorPanel: React.FC = () => {
     const groups: Record<string, typeof matches> = {
         ALL: matches
     };
-    
+
     // Count occurrences per category
     const counts: Record<string, number> = {};
 

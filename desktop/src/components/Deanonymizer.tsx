@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAppStore } from '../store/appStore';
 import { Copy, Check, ArrowRight } from 'lucide-react';
 import { TRANSLATIONS } from '../services/translations';
 
 export const Deanonymizer: React.FC = () => {
-  const { deanonymizerInput, deanonymizerOutput, setDeanonymizerInput, restoreText, language, editorFont } = useAppStore();
+  const { 
+    restoreText, 
+    language, 
+    editorFont, 
+    deanonymizerInput, 
+    setDeanonymizerInput,
+    deanonymizerOutput
+  } = useAppStore();
   const t = TRANSLATIONS[language];
   const [copied, setCopied] = useState(false);
+
+  // Sync scroll refs
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const outputRef = useRef<HTMLTextAreaElement>(null);
+  const isSyncingInput = useRef(false);
+  const isSyncingOutput = useRef(false);
 
   const handleProcess = () => {
     restoreText(deanonymizerInput);
@@ -18,6 +31,28 @@ export const Deanonymizer: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleScroll = (source: 'input' | 'output') => {
+    const input = inputRef.current;
+    const output = outputRef.current;
+    if (!input || !output) return;
+
+    if (source === 'input') {
+        if (isSyncingInput.current) {
+            isSyncingInput.current = false;
+            return;
+        }
+        isSyncingOutput.current = true;
+        output.scrollTop = input.scrollTop;
+    } else {
+        if (isSyncingOutput.current) {
+            isSyncingOutput.current = false;
+            return;
+        }
+        isSyncingInput.current = true;
+        input.scrollTop = output.scrollTop;
+    }
+  };
+
   return (
     <div className="flex-grow flex flex-col md:flex-row h-full overflow-hidden">
       {/* Input Panel */}
@@ -26,6 +61,8 @@ export const Deanonymizer: React.FC = () => {
           {t.pasteAi}
         </div>
         <textarea 
+          ref={inputRef}
+          onScroll={() => handleScroll('input')}
           value={deanonymizerInput}
           onChange={(e) => setDeanonymizerInput(e.target.value)}
           placeholder="Paste text here..."
@@ -61,6 +98,8 @@ export const Deanonymizer: React.FC = () => {
         </div>
         <div className="flex-1 relative">
             <textarea 
+            ref={outputRef}
+            onScroll={() => handleScroll('output')}
             readOnly
             value={deanonymizerOutput}
             placeholder="Restored text will appear here..."

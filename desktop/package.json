@@ -1,6 +1,6 @@
 {
   "name": "ghostlayer-desktop",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Secure document anonymization for AI - Desktop Edition",
   "main": "dist-electron/main.js",
   "author": "GhostLayer Team",
@@ -22,6 +22,7 @@
   "dependencies": {
     "better-sqlite3": "^9.4.0",
     "lucide-react": "^0.460.0",
+    "mammoth": "^1.11.0",
     "pdfjs-dist": "^4.0.379",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

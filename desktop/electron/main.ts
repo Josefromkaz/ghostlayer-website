@@ -249,8 +249,9 @@ ipcMain.handle('dialog:openFile', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
     filters: [
-      { name: 'Documents', extensions: ['pdf', 'txt', 'md', 'docx'] },
+      { name: 'Documents', extensions: ['pdf', 'docx', 'txt', 'md'] },
       { name: 'PDF Files', extensions: ['pdf'] },
+      { name: 'Word Documents', extensions: ['docx'] },
       { name: 'Text Files', extensions: ['txt', 'md'] },
       { name: 'All Files', extensions: ['*'] },
     ],
@@ -263,6 +264,11 @@ ipcMain.handle('dialog:openFile', async () => {
   const filePath = result.filePaths[0];
   const resolvedPath = path.resolve(path.normalize(filePath));
   const ext = path.extname(resolvedPath).toLowerCase();
+
+  console.log('Opening file:', resolvedPath);
+  console.log('Detected extension:', ext);
+  console.log('ALLOWED_EXTENSIONS:', ALLOWED_EXTENSIONS);
+  console.log('Extension check:', ALLOWED_EXTENSIONS.includes(ext));
 
   try {
     // Security: Validate file extension
@@ -284,9 +290,15 @@ ipcMain.handle('dialog:openFile', async () => {
 
     if (ext === '.pdf') {
       // Return path for PDF.js to handle in renderer
+      console.log('Returning type: pdf');
       return { path: resolvedPath, type: 'pdf' };
+    } else if (ext === '.docx') {
+      // Return path for mammoth to handle in renderer
+      console.log('Returning type: docx');
+      return { path: resolvedPath, type: 'docx' };
     } else {
       // Read text files directly
+      console.log('Returning type: text');
       const content = fs.readFileSync(resolvedPath, 'utf-8');
       return { path: resolvedPath, type: 'text', content };
     }
@@ -359,8 +371,8 @@ ipcMain.handle('file:readPdf', async (_, filePath: string) => {
 
     // Security: Verify file extension
     const ext = path.extname(resolvedPath).toLowerCase();
-    if (ext !== '.pdf') {
-      console.error('Invalid file type: Only PDF files are allowed');
+    if (ext !== '.pdf' && ext !== '.docx') {
+      console.error('Invalid file type: Only PDF and DOCX files are allowed');
       return null;
     }
 

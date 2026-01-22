@@ -60,7 +60,9 @@ export const runRedaction = async (
     }
   });
 
-  // Whitelist (Case Insensitive typically desired for phrases)
+  // Store whitelist ranges to exclude from final matches
+  const whitelistRanges: Array<{ start: number; end: number; phrase: string }> = [];
+
   whitelistPhrases.forEach(phrase => {
     if (!phrase.trim()) return;
     const escaped = escapeRegExp(phrase);
@@ -69,13 +71,10 @@ export const runRedaction = async (
       const regex = new RegExp(pattern, 'gi');
       let m;
       while ((m = regex.exec(text)) !== null) {
-        allMatches.push({
-          id: uuidv4(),
-          text: m[0],
+        whitelistRanges.push({
           start: m.index,
           end: m.index + m[0].length,
-          category: RedactionCategory.WHITELIST,
-          isRedacted: false,
+          phrase: m[0]
         });
       }
     } catch (e) {
@@ -107,6 +106,14 @@ export const runRedaction = async (
         }
   });
 
+  // Helper function to check if a range overlaps with whitelist
+  const isOverlappingWhitelist = (start: number, end: number): boolean => {
+    return whitelistRanges.some(wr => {
+      // Check if ranges overlap
+      return !(end <= wr.start || start >= wr.end);
+    });
+  };
+
   // Custom Patterns (User provided regex)
   customPatterns
     .filter(p => p.active)
@@ -116,12 +123,18 @@ export const runRedaction = async (
           const regex = new RegExp(pattern.regex, 'gi');
           let m;
           while ((m = regex.exec(text)) !== null) {
+              const start = m.index;
+              const end = m.index + m[0].length;
+
+              // Skip if overlaps with whitelist suppression range
+              if (isOverlappingWhitelist(start, end)) continue;
+
               allMatches.push({
                 id: uuidv4(),
                 text: m[0],
                 cleanText: m[0],
-                start: m.index,
-                end: m.index + m[0].length,
+                start: start,
+                end: end,
                 category: RedactionCategory.CUSTOM,
                 isRedacted: true,
                 ruleId: pattern.id
@@ -149,14 +162,20 @@ export const runRedaction = async (
         if (isBlacklistedFalsePositive(matchText)) continue;
         if (pattern.validator && !pattern.validator(matchText)) continue;
 
+        const start = m.index;
+        const end = m.index + m[0].length;
+
+        // Skip if overlaps with whitelist suppression range
+        if (isOverlappingWhitelist(start, end)) continue;
+
         const cleanText = (pattern.useGroup1AsIdentity && m[1]) ? m[1] : matchText;
 
         allMatches.push({
           id: uuidv4(),
           text: m[0],
-          cleanText: cleanText, 
-          start: m.index,
-          end: m.index + m[0].length,
+          cleanText: cleanText,
+          start: start,
+          end: end,
           category: pattern.category,
           isRedacted: true,
           ruleId: pattern.id,
@@ -202,12 +221,18 @@ export const runRedaction = async (
       const pattern = new RegExp(`\\b${escapedText}\\b`, 'gi');
       let m;
       while ((m = pattern.exec(text)) !== null) {
+        const start = m.index;
+        const end = m.index + m[0].length;
+
+        // Skip if overlaps with whitelist suppression range
+        if (isOverlappingWhitelist(start, end)) continue;
+
         allMatches.push({
           id: uuidv4(),
           text: m[0],
           cleanText: m[0],
-          start: m.index,
-          end: m.index + m[0].length,
+          start: start,
+          end: end,
           category: category,
           isRedacted: true,
           ruleId: 'consistency_propagation'
@@ -218,34 +243,27 @@ export const runRedaction = async (
     }
   });
 
-  const whitelistRanges: Array<{start: number, end: number}> = [];
-  allMatches
-    .filter(m => m.category === RedactionCategory.WHITELIST)
-    .forEach(m => whitelistRanges.push({ start: m.start, end: m.end }));
+  // 4. Resolve Overlaps
+  // Priority: User Rules > Custom > System
+  // Longest matches win to capture the most specific entity
+  allMatches.sort((a, b) => {
+    const lenA = a.end - a.start;
+    const lenB = b.end - b.start;
 
-  const nonWhitelistMatches = allMatches.filter(m => {
-    if (m.category === RedactionCategory.WHITELIST) return false;
-    for (const range of whitelistRanges) {
-      if (m.start >= range.start && m.end <= range.end) return false;
-    }
-    return true;
-  });
-
-  nonWhitelistMatches.sort((a, b) => {
-    // Priority 1: Custom Patterns win over System Patterns
+    // Custom Patterns win over System
     if (a.category === RedactionCategory.CUSTOM && b.category !== RedactionCategory.CUSTOM) return -1;
     if (b.category === RedactionCategory.CUSTOM && a.category !== RedactionCategory.CUSTOM) return 1;
 
-    // Priority 2: Longer matches win
-    const lenDiff = (b.end - b.start) - (a.end - a.start);
-    if (lenDiff !== 0) return lenDiff;
+    // Length Priority - longest first to capture most specific matches
+    if (lenA !== lenB) return lenB - lenA;
+
     return a.start - b.start;
   });
 
   const finalMatches: Match[] = [];
   const occupiedIndices = new Set<number>();
 
-  for (const match of nonWhitelistMatches) {
+  for (const match of allMatches) {
     let isClean = true;
     for (let i = match.start; i < match.end; i++) {
       if (occupiedIndices.has(i)) {
@@ -253,16 +271,21 @@ export const runRedaction = async (
         break;
       }
     }
+
     if (isClean) {
+      // Mark occupied
+      for (let i = match.start; i < match.end; i++) {
+        occupiedIndices.add(i);
+      }
+      
       finalMatches.push(match);
-      for (let i = match.start; i < match.end; i++) occupiedIndices.add(i);
     }
   }
 
   finalMatches.sort((a, b) => a.start - b.start);
 
   const categoryCounters: Record<string, number> = {};
-  const entityMap: Record<string, string> = {}; 
+  const entityMap: Record<string, string> = {};
 
   return finalMatches.map(match => {
     if (!match.isRedacted) return match;

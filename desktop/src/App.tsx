@@ -8,6 +8,7 @@ import { UpgradeModal } from './components/UpgradeModal';
 import { Ghost, Download, Upload, Settings, Loader2, Moon, Sun, ArrowRightLeft, Copy, Check, ChevronDown, Bell } from 'lucide-react';
 import { useAppStore } from './store/appStore';
 import { extractTextFromPdf } from './services/pdfService';
+import { extractTextFromDocx } from './services/docxService';
 import { TRANSLATIONS } from './services/translations';
 
 type ViewMode = 'REDACT' | 'RESTORE';
@@ -177,13 +178,29 @@ const App: React.FC = () => {
           setIsLoading(true);
           try {
               const fileResult = await window.ghostlayer.file.open();
+              console.log('File open result:', fileResult);
               if (fileResult) {
-                  if (fileResult.type === 'pdf') {
+                  // Check file extension as fallback
+                  const fileName = fileResult.path?.toLowerCase() || '';
+                  const isDocx = fileResult.type === 'docx' || fileName.endsWith('.docx');
+                  const isPdf = fileResult.type === 'pdf' || fileName.endsWith('.pdf');
+
+                  if (isPdf) {
                       const buffer = await window.ghostlayer.file.readPdf(fileResult.path);
                       if (buffer) {
                           const blob = new Blob([buffer as any]);
                           const file = new File([blob], "document.pdf", { type: "application/pdf" });
                           const text = await extractTextFromPdf(file);
+                          setOriginalText(text);
+                      }
+                  } else if (isDocx) {
+                      console.log('Handling DOCX via IPC...');
+                      const buffer = await window.ghostlayer.file.readPdf(fileResult.path); // Reusing readPdf for binary reading
+                      if (buffer) {
+                          console.log('Got buffer for DOCX, size:', buffer.byteLength);
+                          const blob = new Blob([buffer as any]);
+                          const file = new File([blob], "document.docx", { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                          const text = await extractTextFromDocx(file);
                           setOriginalText(text);
                       }
                   } else {
@@ -213,7 +230,12 @@ const App: React.FC = () => {
     const MAX_TEXT_SIZE = 10 * 1024 * 1024; // 10MB
     const MAX_PDF_SIZE = 50 * 1024 * 1024;  // 50MB
 
-    if (file.type === 'application/pdf') {
+    // Check file type by extension as a fallback
+    const fileName = file.name.toLowerCase();
+    const isPdf = file.type === 'application/pdf' || fileName.endsWith('.pdf');
+    const isDocx = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx');
+
+    if (isPdf) {
       if (file.size > MAX_PDF_SIZE) {
         alert(`File too large. PDF limit is ${MAX_PDF_SIZE / 1024 / 1024}MB.`);
         return;
@@ -227,10 +249,15 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     try {
+      console.log('Processing file:', file.name, file.type);
       let text = '';
-      if (file.type === 'application/pdf') {
+      if (isPdf) {
         text = await extractTextFromPdf(file);
+      } else if (isDocx) {
+        console.log('Detected DOCX file');
+        text = await extractTextFromDocx(file);
       } else {
+        console.log('Reading as text file');
         text = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = (ev) => resolve(ev.target?.result as string || '');
@@ -348,7 +375,7 @@ const App: React.FC = () => {
               id="hidden-file-input"
               type="file" 
               className="hidden" 
-              accept=".txt,.md,.json,.pdf"
+              accept=".txt,.md,.json,.pdf,.docx"
               onChange={handleWebFileUpload}
             />
         </div>
