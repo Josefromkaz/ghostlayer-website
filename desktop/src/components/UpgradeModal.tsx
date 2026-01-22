@@ -6,7 +6,7 @@ export const UpgradeModal: React.FC = () => {
 
   if (!upgradeModal.isOpen) return null;
 
-  const canStartTrial = licenseInfo?.type === 'FREE';
+  const canStartTrial = licenseInfo && licenseInfo.type === 'FREE';
 
   const featureNames: Record<string, string> = {
     MEMORY: 'Memory Rules',

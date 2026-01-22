@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { Plus, Trash2, Copy, MessageSquare, X } from 'lucide-react';
 import { TRANSLATIONS } from '../services/translations';
+import { Match, SavedPrompt } from '../types';
 
 interface PromptManagerProps {
   isOpen: boolean;
@@ -38,9 +39,9 @@ export const PromptManager: React.FC<PromptManagerProps> = ({ isOpen, onClose })
   const copyWithRedaction = (promptContent: string) => {
     // Reconstruct redacted text
     let result = originalText;
-    const sortedMatches = [...matches].sort((a, b) => b.start - a.start);
+    const sortedMatches = [...matches].sort((a: Match, b: Match) => b.start - a.start);
     
-    sortedMatches.forEach(match => {
+    sortedMatches.forEach((match: Match) => {
       if (match.isRedacted) {
         result = result.substring(0, match.start) + (match.replacementTag || '[REDACTED]') + result.substring(match.end);
       }
@@ -111,7 +112,7 @@ export const PromptManager: React.FC<PromptManagerProps> = ({ isOpen, onClose })
 
         {/* List */}
         <div className="space-y-3">
-            {prompts.map(prompt => {
+            {prompts.map((prompt: SavedPrompt) => {
                 const isSelected = selectedPromptId === prompt.id;
                 return (
                     <div 

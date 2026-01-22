@@ -1,4 +1,6 @@
-export const TRANSLATIONS = {
+export type Language = 'en' | 'ru';
+
+export const TRANSLATIONS: Record<Language, any> = {
   en: {
     appTitle: "GhostLayer",
     localFirst: "Local-First Desktop",
@@ -230,5 +232,3 @@ export const TRANSLATIONS = {
     }
   }
 };
-
-export type Language = 'en' | 'ru';

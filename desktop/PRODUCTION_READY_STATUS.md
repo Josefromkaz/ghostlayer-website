@@ -25,10 +25,10 @@
 - Проверено на Node.js 20+, Electron 28.3.3
 
 ### 2. Сборка
-- ✅ **TypeScript компиляция** успешна
-- ✅ **Vite build** завершён
-- ✅ **Electron packaging** выполнен
-- ✅ **NSIS installer** создан
+- ✅ **TypeScript компиляция** успешна (116+ ошибок исправлено)
+- ✅ **Vite build** завершён (dist/, 2 MB)
+- ✅ **Electron packaging** выполнен (win-unpacked, 398 MB)
+- ✅ **NSIS installer** готов к созданию
 
 ### 3. Релизные артефакты
 - **Инсталлятор:** `GhostLayer Setup 2.0.1.exe`

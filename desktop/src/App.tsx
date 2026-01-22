@@ -39,7 +39,7 @@ const App: React.FC = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  const selectedPrompt = prompts.find(p => p.id === selectedPromptId);
+  const selectedPrompt = prompts.find((p: any) => p.id === selectedPromptId);
 
   useEffect(() => {
     // Security: Clear sensitive data from memory when the window is closed or reloaded

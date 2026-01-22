@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAppStore } from '../store/appStore';
 import { Copy, Check, ArrowRight } from 'lucide-react';
-import { TRANSLATIONS } from '../services/translations';
+import { TRANSLATIONS, Language } from '../services/translations';
 
 export const Deanonymizer: React.FC = () => {
   const { 
@@ -12,7 +12,7 @@ export const Deanonymizer: React.FC = () => {
     setDeanonymizerInput,
     deanonymizerOutput
   } = useAppStore();
-  const t = TRANSLATIONS[language];
+  const t = TRANSLATIONS[language as Language];
   const [copied, setCopied] = useState(false);
 
   // Sync scroll refs

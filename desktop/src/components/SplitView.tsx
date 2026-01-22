@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import { useAppStore } from '../store/appStore';
-import { TextSegment, RedactionCategory } from '../types';
+import { TextSegment, RedactionCategory, Match } from '../types';
 import { CATEGORY_COLORS } from '../services/regexPatterns';
-import { TRANSLATIONS } from '../services/translations';
-import { EyeOff, Save, ShieldCheck, AlertTriangle, ArrowRight, X } from 'lucide-react';
+import { TRANSLATIONS, Language } from '../services/translations';
+import { EyeOff, Save, ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export const SplitView: React.FC = () => {
   const {
@@ -21,7 +21,7 @@ export const SplitView: React.FC = () => {
     setNotification
   } = useAppStore();
 
-  const t = TRANSLATIONS[language];
+  const t = TRANSLATIONS[language as Language];
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const isSyncingLeft = useRef(false);
@@ -79,7 +79,7 @@ export const SplitView: React.FC = () => {
     const result: TextSegment[] = [];
     let currentIndex = 0;
 
-    matches.forEach((match) => {
+    matches.forEach((match: Match) => {
       // Add non-matching text before
       if (match.start > currentIndex) {
         result.push({
@@ -176,7 +176,7 @@ export const SplitView: React.FC = () => {
       // Check for PARTIAL whitelist conflict (Substring check)
       // 1. Text contains whitelist item
       // 2. Text IS inside a whitelist item
-      const conflict = whitelist.find(w => text.includes(w) || w.includes(text));
+      const conflict = whitelist.find((w: string) => text.includes(w) || w.includes(text));
 
       if (conflict) {
         setConflictModal({ text, whitelistMatch: conflict });
@@ -362,7 +362,7 @@ export const SplitView: React.FC = () => {
           ref={leftRef}
           onScroll={() => handleScroll('left')}
           onMouseUp={handleMouseUp}
-          style={{ fontFamily: `"{editorFont}", monospace` }}
+          style={{ fontFamily: `"${editorFont}", monospace` }}
           className="flex-1 overflow-y-auto p-8 text-sm leading-relaxed whitespace-pre-wrap outline-none text-slate-900 dark:text-slate-200"
           contentEditable
           suppressContentEditableWarning
@@ -409,7 +409,7 @@ export const SplitView: React.FC = () => {
         <div 
           ref={rightRef}
           onScroll={() => handleScroll('right')}
-          style={{ fontFamily: `"{editorFont}", monospace` }}
+          style={{ fontFamily: `"${editorFont}", monospace` }}
           className="flex-1 overflow-y-auto p-8 text-sm leading-relaxed whitespace-pre-wrap text-slate-800 dark:text-slate-300"
         >
           {segments.map((segment) => {

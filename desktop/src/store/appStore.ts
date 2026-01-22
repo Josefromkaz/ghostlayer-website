@@ -66,12 +66,109 @@ KZ IIN: 900101400501
 
 I visited https://secure-bank.com on 12/05/2023.`;
 
+interface Snapshot {
+  originalText: string;
+  matches: Match[];
+  userRules: UserRule[];
+  customPatterns: CustomPattern[];
+  whitelist: string[];
+}
+
+interface AppState {
+  language: Language;
+  editorFont: EditorFont;
+  originalText: string;
+  matches: Match[];
+  isProcessing: boolean;
+  selectedText: string | null;
+
+  // Deanonymizer (Ghost Loop) State
+  deanonymizerInput: string;
+  deanonymizerOutput: string;
+  setDeanonymizerInput: (val: string) => void;
+
+  // Data from Electron
+  userRules: UserRule[];
+  customPatterns: CustomPattern[];
+  whitelist: string[];
+  whitelistedCategories: string[];
+  prompts: SavedPrompt[];
+  selectedPromptId: string | null;
+
+  licenseInfo: LicenseInfo | null;
+
+  // Upgrade Modal
+  upgradeModal: UpgradeModalState;
+  showUpgradeModal: (reason: UpgradeReason, categoryName?: string) => void;
+  closeUpgradeModal: () => void;
+
+  // Error handling
+  lastError: AppError | null;
+  clearError: () => void;
+
+  // Loading
+  isDataLoaded: boolean;
+  loadData: () => Promise<void>;
+
+  // Notification
+  notification: string | null;
+  setNotification: (msg: string | null) => void;
+  clearNotification: () => void;
+
+  // History
+  past: Snapshot[];
+  future: Snapshot[];
+  undo: () => void;
+  redo: () => void;
+  snapshot: () => void;
+
+  // Actions
+  setLanguage: (lang: Language) => Promise<void>;
+  setEditorFont: (font: EditorFont) => Promise<void>;
+  setOriginalText: (text: string) => void;
+  processText: () => Promise<void>;
+  toggleMatchRedaction: (matchId: string) => void;
+  excludeMatch: (matchId: string) => void;
+  restoreExcludedMatch: (matchId: string) => void;
+
+  // Memory / User Rules
+  addUserRule: (text: string, category?: RedactionCategory) => Promise<void>;
+  updateUserRuleCategory: (id: string, category: RedactionCategory) => Promise<void>;
+  removeUserRule: (id: string) => Promise<void>;
+
+  // Custom Patterns
+  addCustomPattern: (name: string, regex: string) => Promise<void>;
+  toggleCustomPattern: (id: string) => Promise<void>;
+  removeCustomPattern: (id: string) => Promise<void>;
+
+  // Whitelist
+  addToWhitelist: (text: string) => Promise<void>;
+  removeFromWhitelist: (text: string) => Promise<void>;
+  addCategoryToWhitelist: (category: string) => void;
+  removeCategoryFromWhitelist: (category: string) => void;
+
+  // Prompts
+  addPrompt: (title: string, content: string) => Promise<void>;
+  removePrompt: (id: string) => Promise<void>;
+  setSelectedPromptId: (id: string | null) => void;
+
+  // Selection
+  setSelectedText: (text: string | null) => void;
+
+  // De-anonymization
+  restoreText: (redactedText: string) => string;
+
+  // Security
+  clearSensitiveData: () => void;
+}
+
 let debouncedProcessText: (() => void) | null = null;
 
 export const useAppStore = create<AppState>()((set, get) => ({
   language: 'en',
   editorFont: 'Lora',
-  originalText: DEFAULT_TEXT,  matches: [],
+  originalText: DEFAULT_TEXT,
+  matches: [],
   userRules: [],
   customPatterns: [],
   whitelist: [],
@@ -90,13 +187,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
   deanonymizerInput: '',
   deanonymizerOutput: '',
 
-  setDeanonymizerInput: (val) => {
+  setDeanonymizerInput: (val: string) => {
     set({ deanonymizerInput: val });
   },
 
   clearError: () => set({ lastError: null }),
 
-  setNotification: (msg) => {
+  setNotification: (msg: string | null) => {
     if (notificationTimer) clearTimeout(notificationTimer);
     set({ notification: msg });
     notificationTimer = setTimeout(() => {
@@ -111,7 +208,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   snapshot: () => {
-    set((state) => {
+    set((state: AppState) => {
       const newSnapshot: Snapshot = {
         originalText: state.originalText,
         matches: state.matches,
@@ -125,7 +222,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   undo: () => {
-    set((state) => {
+    set((state: AppState) => {
       if (state.past.length === 0) return state;
       const previous = state.past[state.past.length - 1];
       const newPast = state.past.slice(0, state.past.length - 1);
@@ -146,7 +243,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
 
   redo: () => {
-    set((state) => {
+    set((state: AppState) => {
       if (state.future.length === 0) return state;
       const next = state.future[0];
       const newFuture = state.future.slice(1);
@@ -191,28 +288,28 @@ export const useAppStore = create<AppState>()((set, get) => ({
       ]);
 
       set({
-        userRules: rules.map((r: any) => ({
+        userRules: (rules as any[]).map((r: any) => ({
           id: r.id,
           text: r.pattern,
           category: r.category as RedactionCategory || RedactionCategory.USER_MEMORY,
           enabled: r.enabled
         })),
-        customPatterns: patterns.map((p: any) => ({
+        customPatterns: (patterns as any[]).map((p: any) => ({
           id: p.id,
           name: p.name,
           regex: p.regex,
           category: p.category,
           active: true
         })),
-        whitelist: whitelistData.map((w: any) => w.phrase),
-        prompts: promptsData.map((p: any) => ({
+        whitelist: (whitelistData as any[]).map((w: any) => w.phrase),
+        prompts: (promptsData as any[]).map((p: any) => ({
           id: p.id,
           title: p.name,
           content: p.content,
           isDefault: p.isDefault,
           createdAt: p.createdAt
         })),
-        licenseInfo: license,
+        licenseInfo: license as LicenseInfo,
         language: (langSetting as Language) || 'en',
         editorFont: (fontSetting as EditorFont) || 'Lora',
         isDataLoaded: true,
@@ -226,7 +323,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  setLanguage: async (lang) => {
+  setLanguage: async (lang: Language) => {
     set({ language: lang });
     if (window.ghostlayer) {
       try {
@@ -238,7 +335,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  setEditorFont: async (font) => {
+  setEditorFont: async (font: EditorFont) => {
     set({ editorFont: font });
     if (window.ghostlayer) {
       try {
@@ -250,7 +347,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  setOriginalText: (text) => {
+  setOriginalText: (text: string) => {
     get().snapshot();
     set({ originalText: text });
     if (!debouncedProcessText) {
@@ -273,42 +370,42 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  toggleMatchRedaction: (matchId) => {
+  toggleMatchRedaction: (matchId: string) => {
     get().snapshot();
-    set((state) => ({
-      matches: state.matches.map((m) =>
+    set((state: AppState) => ({
+      matches: state.matches.map((m: Match) =>
         m.id === matchId ? { ...m, isRedacted: !m.isRedacted } : m
       ),
     }));
   },
 
-  excludeMatch: (matchId) => {
+  excludeMatch: (matchId: string) => {
     get().snapshot();
-    set((state) => ({
-      matches: state.matches.map((m) =>
+    set((state: AppState) => ({
+      matches: state.matches.map((m: Match) =>
         m.id === matchId ? { ...m, excluded: true, excludedAt: Date.now() } : m
       ),
     }));
   },
 
-  restoreExcludedMatch: (matchId) => {
+  restoreExcludedMatch: (matchId: string) => {
     get().snapshot();
-    set((state) => ({
-      matches: state.matches.map((m) =>
+    set((state: AppState) => ({
+      matches: state.matches.map((m: Match) =>
         m.id === matchId ? { ...m, excluded: false, excludedAt: undefined } : m
       ),
     }));
   },
 
-  addUserRule: async (text, category = RedactionCategory.USER_MEMORY) => {
+  addUserRule: async (text: string, category = RedactionCategory.USER_MEMORY) => {
     const cleanText = text.trim();
     if (!cleanText) return;
     try {
       get().snapshot();
       if (!window.ghostlayer) throw new Error('Electron API not available');
       const id = await window.ghostlayer.rules.add(cleanText, category);
-      set((state) => {
-        if (state.userRules.some(r => r.text === cleanText)) return state;
+      set((state: AppState) => {
+        if (state.userRules.some((r: UserRule) => r.text === cleanText)) return state;
         return {
           userRules: [...state.userRules, { id, text: cleanText, category, enabled: true }],
         };
@@ -326,21 +423,21 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  updateUserRuleCategory: async (id, category) => {
+  updateUserRuleCategory: async (id: string, category: RedactionCategory) => {
     get().snapshot();
-    set((state) => ({
-      userRules: state.userRules.map(r => r.id === id ? { ...r, category } : r)
+    set((state: AppState) => ({
+      userRules: state.userRules.map((r: UserRule) => r.id === id ? { ...r, category } : r)
     }));
     get().processText();
   },
 
-  removeUserRule: async (id) => {
+  removeUserRule: async (id: string) => {
     try {
       get().snapshot();
       if (!window.ghostlayer) throw new Error('Electron API not available');
       await window.ghostlayer.rules.delete(id);
-      set((state) => ({
-        userRules: state.userRules.filter((r) => r.id !== id),
+      set((state: AppState) => ({
+        userRules: state.userRules.filter((r: UserRule) => r.id !== id),
       }));
       get().processText();
     } catch (e) {
@@ -349,7 +446,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  addCustomPattern: async (name, regex) => {
+  addCustomPattern: async (name: string, regex: string) => {
     try {
       new RegExp(regex);
     } catch (e) {
@@ -361,7 +458,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       get().snapshot();
       if (!window.ghostlayer) throw new Error('Electron API not available');
       const id = await window.ghostlayer.patterns.add({ name, regex, category: 'CUSTOM' });
-      set((state) => ({
+      set((state: AppState) => ({
         customPatterns: [
           ...state.customPatterns,
           { id, name, regex, active: true, category: 'CUSTOM' }
@@ -379,23 +476,23 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  toggleCustomPattern: async (id) => {
+  toggleCustomPattern: async (id: string) => {
     get().snapshot();
-    set((state) => ({
-      customPatterns: state.customPatterns.map(p =>
+    set((state: AppState) => ({
+      customPatterns: state.customPatterns.map((p: CustomPattern) =>
         p.id === id ? { ...p, active: !p.active } : p
       )
     }));
     get().processText();
   },
 
-  removeCustomPattern: async (id) => {
+  removeCustomPattern: async (id: string) => {
     try {
       get().snapshot();
       if (!window.ghostlayer) throw new Error('Electron API not available');
       await window.ghostlayer.patterns.delete(id);
-      set((state) => ({
-        customPatterns: state.customPatterns.filter(p => p.id !== id)
+      set((state: AppState) => ({
+        customPatterns: state.customPatterns.filter((p: CustomPattern) => p.id !== id)
       }));
       get().processText();
     } catch (e) {
@@ -404,14 +501,14 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  addToWhitelist: async (text) => {
+  addToWhitelist: async (text: string) => {
     const cleanText = text.trim();
     if (!cleanText) return;
     try {
       get().snapshot();
       if (!window.ghostlayer) throw new Error('Electron API not available');
       await window.ghostlayer.whitelist.add(cleanText);
-      set((state) => {
+      set((state: AppState) => {
         if (state.whitelist.includes(cleanText)) return state;
         return { whitelist: [...state.whitelist, cleanText] };
       });
@@ -428,17 +525,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  removeFromWhitelist: async (text) => {
+  removeFromWhitelist: async (text: string) => {
     try {
       if (window.ghostlayer) {
         const allItems = await window.ghostlayer.whitelist.getAll();
-        const item = allItems.find(i => i.phrase === text);
+        const item = (allItems as any[]).find(i => i.phrase === text);
         if (item) {
           await window.ghostlayer.whitelist.delete(item.id);
         }
       }
-      set((state) => ({
-        whitelist: state.whitelist.filter(w => w !== text)
+      set((state: AppState) => ({
+        whitelist: state.whitelist.filter((w: string) => w !== text)
       }));
       get().processText();
     } catch (e) {
@@ -447,27 +544,27 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  addCategoryToWhitelist: (category) => {
+  addCategoryToWhitelist: (category: string) => {
     get().snapshot();
-    set((state) => {
+    set((state: AppState) => {
       if (state.whitelistedCategories.includes(category)) return state;
       return { whitelistedCategories: [...state.whitelistedCategories, category] };
     });
     get().processText();
   },
 
-  removeCategoryFromWhitelist: (category) => {
-    set((state) => ({
-      whitelistedCategories: state.whitelistedCategories.filter(c => c !== category)
+  removeCategoryFromWhitelist: (category: string) => {
+    set((state: AppState) => ({
+      whitelistedCategories: state.whitelistedCategories.filter((c: string) => c !== category)
     }));
     get().processText();
   },
 
-  addPrompt: async (title, content) => {
+  addPrompt: async (title: string, content: string) => {
     try {
       if (!window.ghostlayer) throw new Error('Electron API not available');
       const id = await window.ghostlayer.prompts.save({ name: title, content });
-      set((state) => ({
+      set((state: AppState) => ({
         prompts: [...state.prompts, { id, title, content }]
       }));
     } catch (e) {
@@ -476,12 +573,12 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  removePrompt: async (id) => {
+  removePrompt: async (id: string) => {
     try {
       if (!window.ghostlayer) throw new Error('Electron API not available');
       await window.ghostlayer.prompts.delete(id);
-      set((state) => ({
-        prompts: state.prompts.filter(p => p.id !== id),
+      set((state: AppState) => ({
+        prompts: state.prompts.filter((p: SavedPrompt) => p.id !== id),
         selectedPromptId: state.selectedPromptId === id ? null : state.selectedPromptId
       }));
     } catch (e) {
@@ -490,10 +587,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  setSelectedPromptId: (id) => set({ selectedPromptId: id }),
-  setSelectedText: (text) => set({ selectedText: text }),
+  setSelectedPromptId: (id: string | null) => set({ selectedPromptId: id }),
+  setSelectedText: (text: string | null) => set({ selectedText: text }),
 
-  restoreText: (redactedText) => {
+  restoreText: (redactedText: string) => {
     const { matches } = get();
     const result = restoreTextHelper(redactedText, matches);
     set({ deanonymizerOutput: result });
@@ -511,7 +608,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     });
   },
 
-  showUpgradeModal: (reason, categoryName) => {
+  showUpgradeModal: (reason: UpgradeReason, categoryName?: string) => {
     set({ upgradeModal: { isOpen: true, reason, categoryName } });
   },
 

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
-import { RedactionCategory } from '../types';
+import { RedactionCategory, Match, UserRule } from '../types';
 import { ChevronUp, ChevronDown, X, Shield, Brain, Filter } from 'lucide-react';
 import { CATEGORY_COLORS } from '../services/regexPatterns';
 import { TRANSLATIONS } from '../services/translations';
@@ -13,14 +13,14 @@ export const InspectorPanel: React.FC = () => {
 
   // Compute dynamic groups based on matches present
   const { sortedTabs, groupedMatches } = useMemo(() => {
-    const groups: Record<string, typeof matches> = {
+    const groups: Record<string, Match[]> = {
         ALL: matches
     };
 
     // Count occurrences per category
     const counts: Record<string, number> = {};
 
-    matches.forEach(m => {
+    matches.forEach((m: Match) => {
         if (!groups[m.category]) {
             groups[m.category] = [];
             counts[m.category] = 0;
@@ -55,7 +55,7 @@ export const InspectorPanel: React.FC = () => {
         <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
           <Shield size={16} className="text-brand-600 dark:text-brand-400" />
           <span>{t.privacyInspector}</span>
-          <span className="bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 text-xs px-2 py-0.5 rounded-full">{matches.filter(m => m.isRedacted).length} {t.redactedCount}</span>
+          <span className="bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 text-xs px-2 py-0.5 rounded-full">{matches.filter((m: Match) => m.isRedacted).length} {t.redactedCount}</span>
         </div>
         <div className="text-slate-500 dark:text-slate-400">
             {isOpen ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
@@ -101,7 +101,7 @@ export const InspectorPanel: React.FC = () => {
                         <Brain size={12} /> {t.learnedRules}
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                        {userRules.map(rule => (
+                        {userRules.map((rule: UserRule) => (
                             <span key={rule.id} className="inline-flex items-center gap-1 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 px-2 py-1 rounded text-xs">
                                 <span className="font-bold mr-1">"{rule.text}"</span>
                                 <select 
@@ -124,12 +124,12 @@ export const InspectorPanel: React.FC = () => {
                       <Filter size={16} /> {t.noEntities}
                   </div>
               ) : (
-                  currentList.map((match) => (
+                  currentList.map((match: Match) => (
                     <div 
                       key={match.id}
                       className={`
                         inline-flex items-center gap-2 px-2 py-1 rounded border text-xs font-mono transition-all animate-in fade-in duration-300
-                        ${match.isRedacted ? (CATEGORY_COLORS[match.category] || 'bg-gray-100 text-gray-800 border-gray-200') : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 decoration-line-through'}
+                        ${match.isRedacted ? (CATEGORY_COLORS[match.category as RedactionCategory] || 'bg-gray-100 text-gray-800 border-gray-200') : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 decoration-line-through'}
                       `}
                     >
                       <span className="max-w-[150px] truncate" title={match.text}>{match.text}</span>

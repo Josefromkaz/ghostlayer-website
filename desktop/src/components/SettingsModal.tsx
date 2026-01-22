@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAppStore, EditorFont } from '../store/appStore';
-import { RedactionCategory } from '../types';
+import { RedactionCategory, UserRule, CustomPattern } from '../types';
 import { X, Plus, Trash2, Brain, Regex, ShieldCheck, Key, Star, Globe, Type, Tag } from 'lucide-react';
-import { TRANSLATIONS } from '../services/translations';
+import { TRANSLATIONS, Language } from '../services/translations';
 import { isRegexSafe } from '../services/regexValidator';
 
 // Categories available for whitelisting (excluding system categories)
@@ -30,7 +30,7 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState<'MEMORY' | 'CUSTOM' | 'WHITELIST' | 'LICENSE' | 'LANGUAGE' | 'APPEARANCE'>('MEMORY');
   const store = useAppStore();
-  const t = TRANSLATIONS[store.language];
+  const t = TRANSLATIONS[store.language as Language];
 
   const [newCustomName, setNewCustomName] = useState('');
   const [newCustomRegex, setNewCustomRegex] = useState('');
@@ -198,7 +198,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                 <div className="text-center text-slate-400 py-10 italic">{t.noRules}</div>
               ) : (
                 <div className="grid gap-2">
-                  {store.userRules.map((rule) => (
+                  {store.userRules.map((rule: UserRule) => (
                     <div key={rule.id} className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded shadow-sm border border-slate-200 dark:border-slate-700">
                       <div className="flex flex-col">
                           <span className="font-mono text-sm text-slate-800 dark:text-slate-200">{rule.text}</span>
@@ -251,7 +251,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                  {store.customPatterns.length === 0 ? (
                     <div className="text-center text-slate-400 py-4 italic">{t.noCustomRules}</div>
                  ) : (
-                    store.customPatterns.map(p => (
+                    store.customPatterns.map((p: CustomPattern) => (
                       <div key={p.id} className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded shadow-sm border border-slate-200 dark:border-slate-700">
                         <div>
                           <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">{p.name}</div>
@@ -344,7 +344,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     {store.whitelist.length === 0 ? (
                       <div className="text-center text-slate-400 py-6 italic">{t.noWhitelist}</div>
                     ) : (
-                      store.whitelist.map((item, index) => (
+                      store.whitelist.map((item: string, index: number) => (
                         <div key={index} className="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded shadow-sm border border-slate-200 dark:border-slate-700">
                           <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{item}</span>
                           <button onClick={() => store.removeFromWhitelist(item)} className="text-slate-400 hover:text-red-500 transition-colors">

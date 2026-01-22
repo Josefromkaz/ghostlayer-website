@@ -6,6 +6,33 @@
  */
 
 // ===========================================
+// Database Record Types
+// ===========================================
+export interface LearningRule {
+  id: string;
+  pattern: string;
+  category: string;
+  enabled: boolean;
+  createdAt: number;
+}
+
+export interface Prompt {
+  id: string;
+  name: string;
+  content: string;
+  isDefault: boolean;
+  createdAt: number;
+}
+
+export interface CustomPatternRecord {
+  id: string;
+  name: string;
+  regex: string;
+  category: string;
+  createdAt: number;
+}
+
+// ===========================================
 // Redaction Categories
 // ===========================================
 export enum RedactionCategory {
@@ -159,6 +186,6 @@ export interface UpgradeModalState {
 // ===========================================
 export interface FileResult {
   path: string;
-  type: 'pdf' | 'text';
+  type: 'pdf' | 'text' | 'docx';
   content?: string;
 }
